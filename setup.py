@@ -36,6 +36,7 @@ setup(
     url='https://github.com/innvent/innvent-sso-python-client',
     packages=find_packages(),
     test_suite='innvent_sso_client.tests',
-    tests_require=['tox>=1.6.1', 'virtualenv>=1.11.2'],
+    install_requires=['Django>=1.5.3'],
+    tests_require=['tox>=1.6.1', 'virtualenv>=1.11.2', 'mock==1.0.1'],
     cmdclass = {'test': Tox},
 )
