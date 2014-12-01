@@ -2,11 +2,9 @@
 import unittest
 from mock import patch, Mock
 
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse, QueryDict
 from django.test import RequestFactory
-from django.test.utils import override_settings
 
 from ..decorators import sso_required
 from ..utils import sso_hostname
