@@ -3,10 +3,12 @@ import unittest
 from mock import patch, Mock
 from urllib import urlencode
 
-from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth import SESSION_KEY
+from django.conf import settings
+from django.contrib.auth import SESSION_KEY, login
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ImproperlyConfigured
 from django.test import RequestFactory
+from django.utils.importlib import import_module
 
 from ..middlewares import SSOAuthenticationMiddleware
 
@@ -36,7 +38,14 @@ class SSOAuthenticationMiddlewareTestCase(unittest.TestCase):
     @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
     def test_keep_user_logged_if_no_token_was_provided_and_has_not_expired(self):
         request = self.factory.get(self.__get_url())
+
         user = AnonymousUser()
+        request.user = user
+        engine = import_module(settings.SESSION_ENGINE)
+        request.session = engine.SessionStore()
+        login(request, user)
+        request.session.save()
+
         self.middleware.process_request(request)
         self.assertLoggedUser(request, user)
 
@@ -45,7 +54,6 @@ class SSOAuthenticationMiddlewareTestCase(unittest.TestCase):
 #################################################################
 # encoding: utf-8
 from django.conf import settings
-from django.contrib.auth import login, logout
 from django.utils.importlib import import_module
 from django.contrib.auth.models import AnonymousUser
 

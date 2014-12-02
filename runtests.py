@@ -1,9 +1,12 @@
 # coding: utf-8
 import os
-import unittest
+import sys
 
 
 if __name__ == '__main__':
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "testsettings")
+
     from innvent_sso_client.tests import *
-    unittest.main()
+
+    from django.core.management import execute_from_command_line
+    execute_from_command_line([sys.argv[0], 'test'])
