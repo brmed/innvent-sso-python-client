@@ -25,3 +25,8 @@ ROOT_URLCONF = 'django.contrib.auth.urls'
 SECRET_KEY = 'this_is_not_required'
 DEBUG = True
 SSO_HOST = 'http://ssohost'
+
+import django
+if django.get_version().startswith('1.5'):
+    TEST_RUNNER = 'discover_runner.DiscoverRunner'
+    INSTALLED_APPS += ('discover_runner',)
