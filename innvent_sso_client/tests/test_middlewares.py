@@ -19,6 +19,10 @@ class SSOAuthenticationMiddlewareTestCase(unittest.TestCase):
         self.factory = RequestFactory()
         self.middleware = SSOAuthenticationMiddleware()
 
+    @patch('django.contrib.auth.models.AnonymousUser')
+    def get_user(self, mocked_user):
+        return mocked_user()
+
     def __get_url(self, key=''):
         return '/' if not key else '/?{0}'.format(urlencode({'token': key}))
 
@@ -35,11 +39,10 @@ class SSOAuthenticationMiddlewareTestCase(unittest.TestCase):
             self.middleware.process_request, request
         )
 
-    @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
     def test_keep_user_logged_if_no_token_was_provided_and_has_not_expired(self):
         request = self.factory.get(self.__get_url())
 
-        user = AnonymousUser()
+        user = self.get_user()
         request.user = user
         engine = import_module(settings.SESSION_ENGINE)
         request.session = engine.SessionStore()
