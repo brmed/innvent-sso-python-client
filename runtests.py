@@ -9,4 +9,4 @@ if __name__ == '__main__':
     from innvent_sso_client.tests import *
 
     from django.core.management import execute_from_command_line
-    execute_from_command_line([sys.argv[0], 'test'])
+    execute_from_command_line(['manage.py', 'test'])
