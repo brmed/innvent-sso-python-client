@@ -24,7 +24,10 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'django.contrib.auth.urls'
 SECRET_KEY = 'this_is_not_required'
 DEBUG = True
+
 SSO_HOST = 'http://ssohost'
+SSO_SERVICE_TOKEN = 'test_client_sso'
+SSO_SECRET_KEY = '19a01733de77e077e16b3b4b25f40638fd66e3ef'
 
 import django
 if django.get_version().startswith('1.5'):
