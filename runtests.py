@@ -4,7 +4,7 @@ import sys
 
 
 if __name__ == '__main__':
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "testsettings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "innvent_sso_client.tests.settings")
 
     from innvent_sso_client.tests import *
 

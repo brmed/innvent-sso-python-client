@@ -1,4 +1,5 @@
 # coding: utf-8
+from django.conf.global_settings import SESSION_ENGINE
 
 DATABASES = {
     'default': {
@@ -21,7 +22,7 @@ MIDDLEWARE_CLASSES = (
     'innvent_sso_client.middlewares.SSOAuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'django.contrib.auth.urls'
+ROOT_URLCONF = 'innvent_sso_client.tests.urls'
 SECRET_KEY = 'this_is_not_required'
 DEBUG = True
 
