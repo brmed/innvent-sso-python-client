@@ -12,6 +12,10 @@ def sso_hostname(path):
 
     return '{0}{1}'.format(settings.SSO_HOST, path)
 
+def parse_datetime(dt_string):
+    naive_dt_string = ' '.join(dt_string.split(' ')[0:-1])
+    return datetime.strptime(naive_dt_string, '%Y-%m-%d %H:%M:%S')
+
 
 class SSOAPIClient(object):
 
@@ -29,7 +33,3 @@ class SSOAPIClient(object):
         resp_dict['expires_at'] = parse_datetime(resp_dict['expires_at'])
         return resp_dict
 
-
-def parse_datetime(dt_string):
-    naive_dt_string = ' '.join(dt_string.split(' ')[0:-1])
-    return datetime.strptime(naive_dt_string, '%Y-%m-%d %H:%M:%S')
