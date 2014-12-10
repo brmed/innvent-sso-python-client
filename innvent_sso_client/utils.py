@@ -12,6 +12,7 @@ def sso_hostname(path):
 
     return '{0}{1}'.format(settings.SSO_HOST, path)
 
+
 def parse_datetime(dt_string):
     naive_dt_string = ' '.join(dt_string.split(' ')[0:-1])
     return datetime.strptime(naive_dt_string, '%Y-%m-%d %H:%M:%S')
@@ -24,6 +25,8 @@ class SSOAPIClient(object):
         self._session.auth = (
             settings.SSO_SERVICE_TOKEN, settings.SSO_SECRET_KEY
         )
+        agent = 'python-requests/2.4.1 CPython/2.7.8 Linux/3.12.33-1-MANJARO'
+        self._session.headers['User-Agent'] = agent
 
     def retrieve_new_token(self):
         resp = self._session.get(sso_hostname('/access_token'))
@@ -32,4 +35,3 @@ class SSOAPIClient(object):
         resp_dict = resp.json()
         resp_dict['expires_at'] = parse_datetime(resp_dict['expires_at'])
         return resp_dict
-
