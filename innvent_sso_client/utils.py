@@ -1,4 +1,5 @@
 # coding: utf-8
+from datetime import datetime
 from requests import Session
 
 from django.conf import settings
@@ -26,3 +27,7 @@ class SSOAPIClient(object):
 
         return resp.json()
 
+
+def parse_datetime(dt_string):
+    naive_dt_string = ' '.join(dt_string.split(' ')[0:-1])
+    return datetime.strptime(naive_dt_string, '%Y-%m-%d %H:%M:%S')
