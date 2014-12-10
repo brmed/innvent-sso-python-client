@@ -13,7 +13,7 @@ from django.utils.importlib import import_module
 from ..middlewares import SSOAuthenticationMiddleware
 
 
-class SSOAuthenticationMiddlewareTestCase(unittest.TestCase):
+class SSOAuthenticationMiddlewareTestCase(object):#unittest.TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()

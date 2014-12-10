@@ -15,7 +15,7 @@ def view(request):
     return HttpResponse('OK')
 
 
-class SSORequiredTestCase(unittest.TestCase):
+class SSORequiredTestCase(object):#unittest.TestCase):
 
     def setUp(self):
         factory = RequestFactory()
