@@ -13,6 +13,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'innvent_sso_client',
 )
 
 MIDDLEWARE_CLASSES = (
