@@ -7,7 +7,8 @@ from django.http import HttpResponse, QueryDict
 from django.test import RequestFactory
 
 from ..decorators import sso_required
-from ..utils import sso_hostname
+from ..utils import sso_hostname, SSOAPIClient
+from .testtools import vcr
 
 
 @sso_required
@@ -15,7 +16,7 @@ def view(request):
     return HttpResponse('OK')
 
 
-class SSORequiredTestCase(object):#unittest.TestCase):
+class SSORequiredTestCase(unittest.TestCase):
 
     def setUp(self):
         factory = RequestFactory()
@@ -23,14 +24,20 @@ class SSORequiredTestCase(object):#unittest.TestCase):
         self.request = factory.get(self.url)
 
     def test_should_redirect_to_login_path_of_settings_sso_host(self):
+        with vcr.use_cassette('access_token_valid.json'):
+            token = SSOAPIClient().retrieve_new_token()['token']
+
         qs = QueryDict(None, mutable=True)
         qs['callback_url'] = 'http://testserver{0}'.format(self.url)
+        qs['token'] = token
+
         expected_url = '{0}?{1}'.format(
-            sso_hostname('/login/'), qs.urlencode(safe='/')
+            sso_hostname('/login'), qs.urlencode(safe='/')
         )
 
-        self.request.user = AnonymousUser()
-        response = view(self.request)
+        with vcr.use_cassette('access_token_valid.json'):
+            self.request.user = AnonymousUser()
+            response = view(self.request)
 
         self.assertEqual(302, response.status_code)
         self.assertEqual(expected_url, response['Location'])
