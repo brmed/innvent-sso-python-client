@@ -22,10 +22,12 @@ class SSOAPIClient(object):
         )
 
     def retrieve_new_token(self):
-        resp = self._session.get(sso_hostname('/access_token/'))
+        resp = self._session.get(sso_hostname('/access_token'))
         resp.raise_for_status()
 
-        return resp.json()
+        resp_dict = resp.json()
+        resp_dict['expires_at'] = parse_datetime(resp_dict['expires_at'])
+        return resp_dict
 
 
 def parse_datetime(dt_string):
