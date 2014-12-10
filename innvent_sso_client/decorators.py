@@ -22,6 +22,10 @@ def sso_required(view_func):
         redirect_url = '{0}?{1}'.format(
             sso_hostname('/login'), qs.urlencode(safe='/')
         )
+
+        request.session["SSO_TOKEN"] = token_dict['token']
+        request.session["SSO_TOKEN_EXPIRATION"] = token_dict['expires_at'].isoformat()
+
         return HttpResponseRedirect(redirect_url)
 
     return _wrapped_view
