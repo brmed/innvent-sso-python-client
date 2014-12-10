@@ -1,18 +1,10 @@
 # coding: utf-8
-import os
 import unittest
-from vcr import VCR
 
 from django.conf import settings
 
+from .testtools import vcr
 from ..utils import SSOAPIClient, sso_hostname, parse_datetime
-
-vcr = VCR(
-    serializer = 'json',
-    cassette_library_dir = os.path.join(os.path.dirname(__file__), os.path.pardir, 'cassettes'),
-    record_mode = 'once',
-    match_on = ['method', 'uri', 'port', 'headers', 'body']
-)
 
 
 class SSOAPIClientTestCase(unittest.TestCase):
