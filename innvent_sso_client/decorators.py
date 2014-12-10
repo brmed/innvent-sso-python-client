@@ -2,7 +2,6 @@
 from functools import wraps
 
 from django.http import QueryDict, HttpResponseRedirect
-from django.contrib.auth.decorators import login_required
 
 from .utils import sso_hostname, SSOAPIClient
 

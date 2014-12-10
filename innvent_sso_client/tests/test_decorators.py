@@ -1,27 +1,19 @@
 # coding: utf-8
-import unittest
 from mock import patch, Mock
 
 from django.contrib.auth.models import AnonymousUser
-from django.http import HttpResponse, QueryDict
-from django.test import RequestFactory
+from django.core.urlresolvers import reverse
+from django.http import QueryDict
+from django.test import TestCase
 
-from ..decorators import sso_required
-from ..utils import sso_hostname, SSOAPIClient
 from .testtools import vcr
+from ..utils import sso_hostname, SSOAPIClient
 
 
-@sso_required
-def view(request):
-    return HttpResponse('OK')
-
-
-class SSORequiredTestCase(unittest.TestCase):
+class SSORequiredTestCase(TestCase):
 
     def setUp(self):
-        factory = RequestFactory()
-        self.url = '/foo/bar/'
-        self.request = factory.get(self.url)
+        self.url = reverse('sso_required')
 
     def test_should_redirect_to_login_path_of_settings_sso_host(self):
         with vcr.use_cassette('access_token_valid.json'):
@@ -36,17 +28,14 @@ class SSORequiredTestCase(unittest.TestCase):
         )
 
         with vcr.use_cassette('access_token_valid.json'):
-            self.request.user = AnonymousUser()
-            response = view(self.request)
+            response = self.client.get(self.url)
 
         self.assertEqual(302, response.status_code)
         self.assertEqual(expected_url, response['Location'])
 
     @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
     def test_should_not_redirect_for_logged_user(self):
-        self.request.user = AnonymousUser()
-        response = view(self.request)
+        response = self.client.get(self.url)
 
-        self.assertTrue(self.request.user.is_authenticated)
         self.assertEqual(200, response.status_code)
         self.assertEqual('OK', response.content)
