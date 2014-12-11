@@ -21,6 +21,8 @@ class SSOBackend(ModelBackend):
                 **username_kwargs
             )
 
+        user.backend = 'innvent_sso_client.backends.SSOBackend'
+
         SSOUserToken.objects.create_or_update(user, token, expiration_datetime)
 
         return user
