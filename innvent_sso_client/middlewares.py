@@ -18,7 +18,11 @@ class SSOMiddleware(object):
                 " before the SSOAuthenticationMiddleware class."
             )
 
-        if not ('SSO_TOKEN' in request.session and 'SSO_TOKEN_EXPIRATION' in request.session):
+        session_token = request.session.get('SSO_TOKEN')
+        session_token_expiration = request.session.get('SSO_TOKEN_EXPIRATION')
+
+
+        if not (session_token and session_token_expiration):
             # não existe token ou expiração na sessão
             return
 
