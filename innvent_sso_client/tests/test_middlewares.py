@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.contrib.auth import SESSION_KEY
+from django.contrib.auth import SESSION_KEY, get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, RequestFactory
@@ -48,9 +48,10 @@ class SSOMiddlewareTestCase(TestCase):
     def assertUserNotAuthenticated(self, request):
         self.assertNotIn(SESSION_KEY, request.session)
 
-    def assertUserAuthenticated(self, request):
+    def assertUserAuthenticated(self, request, user):
         self.assertIn(SESSION_KEY, request.session)
         self.assertEqual(request.session[SESSION_KEY], user.id)
+
 
     def test_middleware_requires_authentication_middleware(self):
         request = self.factory.get(self.__get_url(self.data))
@@ -89,3 +90,17 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.assertUserNotAuthenticated(request)
 
+    def test_logs_user_in_if_data_is_correct_and_token_is_the_same_as_session(self):
+        request = self.factory.get(self.__get_url(self.data))
+        self.__build_session(request)
+        request.user = AnonymousUser()
+
+        request.session['SSO_TOKEN'] = self.data['token']
+        expiration = (datetime.now() + timedelta(days=1)).isoformat()
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration
+
+        self.middleware.process_request(request)
+
+        user = get_user_model().objects.all()[0]
+
+        self.assertUserAuthenticated(request, user)
