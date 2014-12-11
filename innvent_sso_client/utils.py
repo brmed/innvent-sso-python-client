@@ -1,5 +1,6 @@
 # coding: utf-8
 from datetime import datetime
+from dateutil.parser import parse
 from requests import Session
 
 from django.conf import settings
@@ -11,11 +12,6 @@ def sso_hostname(path):
         raise ImproperlyConfigured('You need to set the SSO_HOST in the settings.')
 
     return '{0}{1}'.format(settings.SSO_HOST, path)
-
-
-def parse_datetime(dt_string):
-    naive_dt_string = ' '.join(dt_string.split(' ')[0:-1])
-    return datetime.strptime(naive_dt_string, '%Y-%m-%d %H:%M:%S')
 
 
 class SSOAPIClient(object):
@@ -33,5 +29,5 @@ class SSOAPIClient(object):
         resp.raise_for_status()
 
         resp_dict = resp.json()
-        resp_dict['expires_at'] = parse_datetime(resp_dict['expires_at'])
+        resp_dict['expires_at'] = parse(resp_dict['expires_at'])
         return resp_dict

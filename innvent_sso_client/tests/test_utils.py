@@ -1,10 +1,11 @@
 # coding: utf-8
 import unittest
+from dateutil.parser import parse
 
 from django.conf import settings
 
 from .testtools import vcr
-from ..utils import SSOAPIClient, sso_hostname, parse_datetime
+from ..utils import SSOAPIClient, sso_hostname
 
 
 class SSOAPIClientTestCase(unittest.TestCase):
@@ -29,6 +30,6 @@ class SSOAPIClientTestCase(unittest.TestCase):
         self.assertEqual(resp_dict['token'], expected_dict['token'])
 
         self.assertIn('expires_at', resp_dict.keys())
-        expected_expires_at = parse_datetime(expected_dict['expires_at'])
+        expected_expires_at = parse(expected_dict['expires_at'])
         self.assertEqual(resp_dict['expires_at'], expected_expires_at)
 
