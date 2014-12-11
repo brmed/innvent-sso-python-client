@@ -18,6 +18,10 @@ class SSOMiddleware(object):
                 " before the SSOAuthenticationMiddleware class."
             )
 
+        if not ('SSO_TOKEN' in request.session and 'SSO_TOKEN_EXPIRATION' in request.session):
+            # não existe token ou expiração na sessão
+            return
+
 
     def extract_user_data(self, request):
         b64_data = request.GET.get('data')

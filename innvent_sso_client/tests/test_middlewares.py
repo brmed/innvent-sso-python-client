@@ -2,8 +2,12 @@
 import base64
 import json
 
+from django.conf import settings
+from django.contrib.auth import SESSION_KEY
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, RequestFactory
+from django.utils.importlib import import_module
 
 from ..middlewares import SSOMiddleware
 
@@ -35,6 +39,11 @@ class SSOMiddlewareTestCase(TestCase):
 
         return url
 
+    def __build_session(self, request):
+        engine = import_module(settings.SESSION_ENGINE)
+        request.session = engine.SessionStore()
+        request.session.save()
+
     def test_middleware_requires_authentication_middleware(self):
         request = self.factory.get(self.__get_url(self.data))
 
@@ -50,4 +59,12 @@ class SSOMiddlewareTestCase(TestCase):
         self.assertEqual(self.data['token'], token)
         self.assertEqual(self.data['user'], user_data)
 
+    def test_does_not_log_user_in_if_there_is_no_token_in_session(self):
+        request = self.factory.get(self.__get_url(self.data))
+        self.__build_session(request)
+        request.user = AnonymousUser()
+
+        self.middleware.process_request(request)
+
+        self.assertNotIn(SESSION_KEY, request.session)
 
