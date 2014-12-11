@@ -1,6 +1,7 @@
 # coding: utf-8
 import base64
 import json
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth import SESSION_KEY
@@ -70,6 +71,18 @@ class SSOMiddlewareTestCase(TestCase):
         request = self.factory.get(self.__get_url(self.data))
         self.__build_session(request)
         request.user = AnonymousUser()
+
+        self.middleware.process_request(request)
+
+        self.assertUserNotAuthenticated(request)
+
+    def test_does_not_log_user_in_if_data_token_is_different_from_session_token(self):
+        request = self.factory.get(self.__get_url(self.data))
+        self.__build_session(request)
+        request.user = AnonymousUser()
+
+        request.session['SSO_TOKEN'] = 'mfw_i_dont_even'
+        request.session['SSO_TOKEN_EXPIRATION'] = datetime.now() + timedelta(days=1)
 
         self.middleware.process_request(request)
 
