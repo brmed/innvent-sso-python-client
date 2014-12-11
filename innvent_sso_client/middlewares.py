@@ -26,6 +26,11 @@ class SSOMiddleware(object):
             # não existe token ou expiração na sessão
             return
 
+        token, user_data = self.extract_user_data(request)
+
+        if token != session_token:
+            return
+
 
     def extract_user_data(self, request):
         b64_data = request.GET.get('data')
