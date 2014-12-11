@@ -82,7 +82,8 @@ class SSOMiddlewareTestCase(TestCase):
         request.user = AnonymousUser()
 
         request.session['SSO_TOKEN'] = 'mfw_i_dont_even'
-        request.session['SSO_TOKEN_EXPIRATION'] = datetime.now() + timedelta(days=1)
+        expiration = (datetime.now() + timedelta(days=1)).isoformat()
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration
 
         self.middleware.process_request(request)
 
