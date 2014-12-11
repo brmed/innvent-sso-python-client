@@ -122,3 +122,20 @@ class SSOMiddlewareTestCase(TestCase):
         user = get_user_model().objects.all()[0]
 
         self.assertUserAuthenticated(request, user)
+
+    def test_logged_in_user_should_stay_logged_in_if_token_is_not_expired(self):
+        request = self.factory.get(self.__get_url(self.data))
+        self.__build_session(request)
+
+        request.session['SSO_TOKEN'] = self.data['token']
+        expiration = (datetime.now() + timedelta(days=1)).isoformat()
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration
+
+        request.user = self.__create_user_and_log_it_in(request)
+
+        self.middleware.process_request(request)
+
+        user = get_user_model().objects.all()[0]
+
+        self.assertUserAuthenticated(request, user)
+
