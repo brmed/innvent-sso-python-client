@@ -2,14 +2,16 @@
 import base64
 import json
 from datetime import datetime, timedelta
+from model_mommy import mommy
 
 from django.conf import settings
-from django.contrib.auth import SESSION_KEY, get_user_model
+from django.contrib.auth import SESSION_KEY, get_user_model, login
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, RequestFactory
 from django.utils.importlib import import_module
 
+from ..backends import SSOBackend
 from ..middlewares import SSOMiddleware
 
 
@@ -44,6 +46,22 @@ class SSOMiddlewareTestCase(TestCase):
         engine = import_module(settings.SESSION_ENGINE)
         request.session = engine.SessionStore()
         request.session.save()
+
+    def __create_user_and_log_it_in(self, request, token_expiration=None):
+        if not token_expiration:
+            token_expiration = datetime.now() + timedelta(days=1)
+
+        username_kwargs = {get_user_model().USERNAME_FIELD: self.data['user']['login']}
+        mommy.make(get_user_model(), **username_kwargs)
+
+        user = SSOBackend().authenticate(
+            self.data['token'],
+            token_expiration,
+            self.data['user']['login']
+        )
+        login(request, user)
+
+        return user
 
     def assertUserNotAuthenticated(self, request):
         self.assertNotIn(SESSION_KEY, request.session)
