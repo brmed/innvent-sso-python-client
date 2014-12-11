@@ -11,7 +11,10 @@ from ..middlewares import SSOMiddleware
 class SSOMiddlewareTestCase(TestCase):
 
     def setUp(self):
-        self.url = "http://testserver/sso-required/?data=eyJ1c2VyIjp7ImxvZ2luIjoidGVzdCIsImVtYWlsIjoidGVzdEBleGFtcGxl%0ALmNvbSIsImZpcnN0X25hbWUiOiJUZXN0IiwibGFzdF9uYW1lIjoiVXNlciJ9%0ALCJ0b2tlbiI6ImIwYWQ1ZTMwNWFhOGExMGViZTk1NTUyMGI1YmFiOTA3In0%3D%0A"
+        self.url = 'http://testserver/sso-required/?data=eyJ1c2VyIjp7ImxvZ2luI'\
+        'joidGVzdCIsImVtYWlsIjoidGVzdEBleGFtcGxl%0ALmNvbSIsImZpcnN0X25hbWUiOiJ'\
+        'UZXN0IiwibGFzdF9uYW1lIjoiVXNlciJ9%0ALCJ0b2tlbiI6ImIwYWQ1ZTMwNWFhOGExM'\
+        'GViZTk1NTUyMGI1YmFiOTA3In0%3D%0A'
 
         self.factory = RequestFactory()
         self.middleware = SSOMiddleware()
