@@ -1,4 +1,6 @@
 # coding: utf-8
+import base64
+import json
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, RequestFactory
@@ -21,4 +23,13 @@ class SSOMiddlewareTestCase(TestCase):
             ImproperlyConfigured, self.middleware.process_request, request
         )
 
+    def test_parse_data_returns_user_data_plus_token(self):
+        request = self.factory.get(self.url)
+
+        expected_data = json.loads(base64.b64decode(request.GET['data']))
+
+        token, user_data = self.middleware.extract_user_data(request)
+
+        self.assertEqual(expected_data['token'], token)
+        self.assertEqual(expected_data['user'], user_data)
 

@@ -1,4 +1,7 @@
 # coding: utf-8
+import base64
+import json
+
 from django.core.exceptions import ImproperlyConfigured
 
 
@@ -14,3 +17,11 @@ class SSOMiddleware(object):
                 " 'django.contrib.auth.middleware.AuthenticationMiddleware'"
                 " before the SSOAuthenticationMiddleware class."
             )
+
+
+    def extract_user_data(self, request):
+        b64_data = request.GET.get('data')
+        json_data = base64.b64decode(b64_data)
+        data = json.loads(json_data)
+
+        return data['token'], data['user']
