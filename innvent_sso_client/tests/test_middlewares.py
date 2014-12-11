@@ -70,7 +70,6 @@ class SSOMiddlewareTestCase(TestCase):
         self.assertIn(SESSION_KEY, request.session)
         self.assertEqual(request.session[SESSION_KEY], user.id)
 
-
     def test_middleware_requires_authentication_middleware(self):
         request = self.factory.get(self.__get_url(self.data))
 
@@ -139,3 +138,33 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.assertUserAuthenticated(request, user)
 
+    def test_user_with_an_expired_token_should_not_log_in(self):
+        request = self.factory.get(self.__get_url(self.data))
+        self.__build_session(request)
+        request.user = AnonymousUser()
+
+        request.session['SSO_TOKEN'] = self.data['token']
+        expiration = (datetime.now() - timedelta(days=1)).isoformat()
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration
+
+        self.middleware.process_request(request)
+
+        user = get_user_model().objects.all()[0]
+
+        self.assertUserNotAuthenticated(request)
+
+    def test_logged_in_user_with_an_expired_token_should_logout(self):
+        request = self.factory.get(self.__get_url(self.data))
+        self.__build_session(request)
+
+        request.session['SSO_TOKEN'] = self.data['token']
+        expiration = (datetime.now() - timedelta(days=1)).isoformat()
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration
+
+        request.user = self.__create_user_and_log_it_in(request, expiration)
+
+        self.middleware.process_request(request)
+
+        user = get_user_model().objects.all()[0]
+
+        self.assertUserNotAuthenticated(request)

@@ -3,7 +3,7 @@ import base64
 import json
 from dateutil.parser import parse
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ImproperlyConfigured
 
 from .backends import SSOBackend
@@ -44,6 +44,10 @@ class SSOMiddleware(object):
             first_name=user_data['first_name'],
             last_name=user_data['last_name'],
         )
+
+        if user.ssousertoken.has_expired:
+            logout(request)
+            return
 
         if user:
             request.user = user
