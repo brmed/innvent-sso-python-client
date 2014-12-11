@@ -44,6 +44,13 @@ class SSOMiddlewareTestCase(TestCase):
         request.session = engine.SessionStore()
         request.session.save()
 
+    def assertUserNotAuthenticated(self, request):
+        self.assertNotIn(SESSION_KEY, request.session)
+
+    def assertUserAuthenticated(self, request):
+        self.assertIn(SESSION_KEY, request.session)
+        self.assertEqual(request.session[SESSION_KEY], user.id)
+
     def test_middleware_requires_authentication_middleware(self):
         request = self.factory.get(self.__get_url(self.data))
 
