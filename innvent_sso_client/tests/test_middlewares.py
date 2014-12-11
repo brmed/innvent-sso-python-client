@@ -73,5 +73,5 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.middleware.process_request(request)
 
-        self.assertNotIn(SESSION_KEY, request.session)
+        self.assertUserNotAuthenticated(request)
 
