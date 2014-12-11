@@ -19,7 +19,7 @@ class SSOMiddlewareTestCase(TestCase):
             'user': {
                 'login': 'test',
                 'email': 'test@example.com',
-                'fist_name': 'Test',
+                'first_name': 'Test',
                 'last_name': 'User',
             },
             'token': 'b0ad5e305aa8a10ebe955520b5bab907'
