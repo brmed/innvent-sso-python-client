@@ -2,7 +2,7 @@
 from django.core.exceptions import ImproperlyConfigured
 
 
-class SSOAuthenticationMiddleware(object):
+class SSOMiddleware(object):
 
     def process_request(self, request):
 

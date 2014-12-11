@@ -20,7 +20,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'innvent_sso_client.middlewares.SSOAuthenticationMiddleware',
 )
 
 ROOT_URLCONF = 'innvent_sso_client.tests.urls'
