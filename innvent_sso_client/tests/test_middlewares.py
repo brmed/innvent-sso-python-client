@@ -158,8 +158,8 @@ class SSOMiddlewareTestCase(TestCase):
         self.__build_session(request)
 
         request.session['SSO_TOKEN'] = self.data['token']
-        expiration = (datetime.now() - timedelta(days=1)).isoformat()
-        request.session['SSO_TOKEN_EXPIRATION'] = expiration
+        expiration = datetime.now() - timedelta(days=1)
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration.isoformat()
 
         request.user = self.__create_user_and_log_it_in(request, expiration)
 
