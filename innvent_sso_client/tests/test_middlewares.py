@@ -5,13 +5,12 @@ from datetime import datetime, timedelta
 from model_mommy import mommy
 
 from django.conf import settings
-from django.contrib.auth import SESSION_KEY, get_user_model, login
+from django.contrib.auth import SESSION_KEY, get_user_model, login, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, RequestFactory
 from django.utils.importlib import import_module
 
-from ..backends import SSOBackend
 from ..middlewares import SSOMiddleware
 
 
@@ -54,11 +53,12 @@ class SSOMiddlewareTestCase(TestCase):
         username_kwargs = {get_user_model().USERNAME_FIELD: self.data['user']['login']}
         mommy.make(get_user_model(), **username_kwargs)
 
-        user = SSOBackend().authenticate(
-            self.data['token'],
-            token_expiration,
-            self.data['user']['login']
+        user = authenticate(
+            token=self.data['token'],
+            expiration_datetime=token_expiration,
+            username=self.data['user']['login']
         )
+
         login(request, user)
 
         return user

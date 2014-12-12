@@ -1,5 +1,5 @@
 # coding: utf-8
-from django.conf.global_settings import SESSION_ENGINE
+from django.conf.global_settings import SESSION_ENGINE, AUTHENTICATION_BACKENDS
 
 DATABASES = {
     'default': {
@@ -21,6 +21,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
+
+AUTHENTICATION_BACKENDS += ('innvent_sso_client.backends.SSOBackend',)
 
 ROOT_URLCONF = 'innvent_sso_client.tests.urls'
 SECRET_KEY = 'this_is_not_required'

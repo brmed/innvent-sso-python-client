@@ -6,8 +6,6 @@ from dateutil.parser import parse
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ImproperlyConfigured
 
-from .backends import SSOBackend
-
 
 class SSOMiddleware(object):
 
@@ -36,7 +34,7 @@ class SSOMiddleware(object):
 
         token_expiration = parse(session_token_expiration)
 
-        user = SSOBackend().authenticate(
+        user = authenticate(
             token=token,
             expiration_datetime=token_expiration,
             username=user_data['login'],
