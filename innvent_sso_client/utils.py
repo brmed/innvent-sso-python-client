@@ -29,5 +29,5 @@ class SSOAPIClient(object):
         resp.raise_for_status()
 
         resp_dict = resp.json()
-        resp_dict['expires_at'] = parse(resp_dict['expires_at'])
+        resp_dict['expires_at'] = parse(resp_dict['expires_at'], ignoretz=True)
         return resp_dict

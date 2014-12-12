@@ -30,6 +30,6 @@ class SSOAPIClientTestCase(unittest.TestCase):
         self.assertEqual(resp_dict['token'], expected_dict['token'])
 
         self.assertIn('expires_at', resp_dict.keys())
-        expected_expires_at = parse(expected_dict['expires_at'])
+        expected_expires_at = parse(expected_dict['expires_at'], ignoretz=True)
         self.assertEqual(resp_dict['expires_at'], expected_expires_at)
 
