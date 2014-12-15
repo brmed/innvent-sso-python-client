@@ -78,7 +78,9 @@ class SSOMiddleware(object):
     def logout_expired_token_user(self, request, user=None):
         user = user or request.user
 
-        if user.is_authenticated() and user.ssousertoken.has_expired:
-            logout(request)
-            return True
+        if user.is_authenticated():
+            if not hasattr(user, 'ssousertoken') or user.ssousertoken.has_expired:
+                logout(request)
+                return True
+
 

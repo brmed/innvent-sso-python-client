@@ -165,6 +165,24 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.middleware.process_request(request)
 
-        user = get_user_model().objects.all()[0]
+        self.assertUserNotAuthenticated(request)
+
+    def test_user_without_sso_token_and_data_should_not_login(self):
+        request = self.factory.get(self.__get_url())
+        self.__build_session(request)
+
+        request.session['SSO_TOKEN'] = self.data['token']
+        expiration = datetime.now() + timedelta(days=1)
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration.isoformat()
+
+        request.user = self.__create_user_and_log_it_in(request)
+
+        # DELETA O TOKEN
+        request.user.ssousertoken.delete()
+        del request.user.__dict__['_ssousertoken_cache']
+
+        self.assertUserAuthenticated(request, request.user)
+
+        self.middleware.process_request(request)
 
         self.assertUserNotAuthenticated(request)
