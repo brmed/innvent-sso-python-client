@@ -34,3 +34,12 @@ class TestLoginRequiredMixin(object):
         redirect_url = sso_hostname('/login?{0}'.format(qs.urlencode(safe='/')))
 
         self.assertRedirects(response, redirect_url)
+
+
+class TestAjaxLoginRequiredMixin(object):
+
+    def test_login_required(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 403)
