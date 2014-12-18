@@ -2,46 +2,14 @@
     "version": 1, 
     "interactions": [
         {
-            "response": {
-                "headers": {
-                    "x-xss-protection": [
-                        "1; mode=block"
-                    ], 
-                    "connection": [
-                        "Keep-Alive"
-                    ], 
-                    "server": [
-                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
-                    ], 
-                    "content-length": [
-                        "85"
-                    ], 
-                    "x-content-type-options": [
-                        "nosniff"
-                    ], 
-                    "x-frame-options": [
-                        "SAMEORIGIN"
-                    ], 
-                    "date": [
-                        "Thu, 11 Dec 2014 17:04:03 GMT"
-                    ], 
-                    "content-type": [
-                        "text/html;charset=utf-8"
-                    ]
-                }, 
-                "body": {
-                    "string": "{\"token\":\"b0ad5e305aa8a10ebe955520b5bab907\",\"expires_at\":\"2014-12-11 19:04:03 +0000\"}"
-                }, 
-                "status": {
-                    "message": "OK", 
-                    "code": 200
-                }
-            }, 
             "request": {
-                "uri": "http://devsso:9292/access_token", 
-                "body": null, 
-                "method": "GET", 
                 "headers": {
+                    "User-Agent": [
+                        "python-requests/2.4.1 CPython/2.7.8 Linux/3.12.33-1-MANJARO"
+                    ], 
+                    "Connection": [
+                        "keep-alive"
+                    ], 
                     "Accept-Encoding": [
                         "gzip, deflate"
                     ], 
@@ -49,14 +17,46 @@
                         "*/*"
                     ], 
                     "Authorization": [
-                        "Basic dGVzdF9jbGllbnRfc3NvOjE5YTAxNzMzZGU3N2UwNzdlMTZiM2I0YjI1ZjQwNjM4ZmQ2NmUzZWY="
-                    ], 
-                    "User-Agent": [
-                        "python-requests/2.4.1 CPython/2.7.8 Linux/3.12.33-1-MANJARO"
-                    ], 
-                    "Connection": [
-                        "keep-alive"
+                        "Basic dGVzdF9jbGllbnRfc3NvOjI4ZTFlYTgxNWU3NGMzMTM3OWI3MThlOGQ3MDAwMGY5M2I5MjhiZDU="
                     ]
+                }, 
+                "body": null, 
+                "uri": "http://devsso:9292/access_token", 
+                "method": "GET"
+            }, 
+            "response": {
+                "status": {
+                    "code": 200, 
+                    "message": "OK"
+                }, 
+                "headers": {
+                    "x-xss-protection": [
+                        "1; mode=block"
+                    ], 
+                    "content-type": [
+                        "text/html;charset=utf-8"
+                    ], 
+                    "date": [
+                        "Thu, 18 Dec 2014 19:59:05 GMT"
+                    ], 
+                    "content-length": [
+                        "85"
+                    ], 
+                    "x-content-type-options": [
+                        "nosniff"
+                    ], 
+                    "server": [
+                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
+                    ], 
+                    "connection": [
+                        "Keep-Alive"
+                    ], 
+                    "x-frame-options": [
+                        "SAMEORIGIN"
+                    ]
+                }, 
+                "body": {
+                    "string": "{\"token\":\"3e77949cb97713fe983e3b1e6104ea31\",\"expires_at\":\"2014-12-18 21:59:05 +0000\"}"
                 }
             }
         }

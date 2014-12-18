@@ -30,7 +30,7 @@ DEBUG = True
 
 SSO_HOST = 'http://devsso:9292'
 SSO_SERVICE_TOKEN = 'test_client_sso'
-SSO_SECRET_KEY = '19a01733de77e077e16b3b4b25f40638fd66e3ef'
+SSO_SECRET_KEY = '28e1ea815e74c31379b718e8d70000f93b928bd5'
 
 import django
 if django.get_version().startswith('1.5'):
