@@ -43,3 +43,12 @@ class SSOAPIClient(object):
         resp['expires_at'] = parse(resp['expires_at'], ignoretz=True)
         return resp
 
+    def create_user(self, username, passwd, **user_kwargs):
+        data = {
+            'login': username,
+            'password': passwd,
+            'email': user_kwargs.get('email', ''),
+            'first_name': user_kwargs.get('first_name', ''),
+            'last_name': user_kwargs.get('last_name', ''),
+        }
+        return {'id': self._post('/users', data)['created_user_id']}

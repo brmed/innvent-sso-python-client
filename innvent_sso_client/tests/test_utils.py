@@ -32,3 +32,27 @@ class SSOAPIClientTestCase(unittest.TestCase):
         expected_expires_at = parse(exp_resp['expires_at'], ignoretz=True)
         self.assertEqual(resp_dict['expires_at'], expected_expires_at)
 
+    def test_create_user_should_return_the_user_id(self):
+        with vcr.use_cassette('create_user_successful.json'):
+            resp = SSOAPIClient().create_user(
+                username='user',
+                passwd='passwd',
+                email='user@example.com',
+                first_name='Test',
+                last_name='User',
+            )
+
+        with vcr.use_cassette('create_user_successful.json'):
+            post_data = {
+                'login': 'user',
+                'password': 'passwd',
+                'email': 'user@example.com',
+                'first_name': 'Test',
+                'last_name': 'User'
+            }
+
+            exp_resp = SSOAPIClient()._post('/users', post_data)
+            exp_dict = {'id': exp_resp['created_user_id']}
+
+        self.assertEqual(exp_dict, resp)
+
