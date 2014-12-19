@@ -24,10 +24,22 @@ class SSOAPIClient(object):
         agent = 'python-requests/2.4.1 CPython/2.7.8 Linux/3.12.33-1-MANJARO'
         self._session.headers['User-Agent'] = agent
 
-    def retrieve_new_token(self):
-        resp = self._session.get(sso_hostname('/access_token'))
+    def _request(self, method, path, data=None, **kwargs):
+        url = sso_hostname(path)
+
+        resp = self._session.request(method, url, data=data, **kwargs)
         resp.raise_for_status()
 
-        resp_dict = resp.json()
-        resp_dict['expires_at'] = parse(resp_dict['expires_at'], ignoretz=True)
-        return resp_dict
+        return resp.json()
+
+    def _get(self, path, data=None, **kwargs):
+        return self._request('get', path, data, **kwargs)
+
+    def _post(self, path, data=None, **kwargs):
+        return self._request('post', path, data, **kwargs)
+
+    def retrieve_new_token(self):
+        resp = self._get('/access_token')
+        resp['expires_at'] = parse(resp['expires_at'], ignoretz=True)
+        return resp
+

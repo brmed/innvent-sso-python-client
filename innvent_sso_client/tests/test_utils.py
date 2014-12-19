@@ -23,13 +23,12 @@ class SSOAPIClientTestCase(unittest.TestCase):
             resp_dict = SSOAPIClient().retrieve_new_token()
 
         with vcr.use_cassette('access_token_valid.json'):
-            exp_resp = SSOAPIClient()._session.get(sso_hostname('/access_token'))
-            expected_dict = exp_resp.json()
+            exp_resp = SSOAPIClient()._get('/access_token')
 
         self.assertIn('token', resp_dict.keys())
-        self.assertEqual(resp_dict['token'], expected_dict['token'])
+        self.assertEqual(resp_dict['token'], exp_resp['token'])
 
         self.assertIn('expires_at', resp_dict.keys())
-        expected_expires_at = parse(expected_dict['expires_at'], ignoretz=True)
+        expected_expires_at = parse(exp_resp['expires_at'], ignoretz=True)
         self.assertEqual(resp_dict['expires_at'], expected_expires_at)
 
