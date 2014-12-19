@@ -56,3 +56,13 @@ class SSOAPIClientTestCase(unittest.TestCase):
 
         self.assertEqual(exp_dict, resp)
 
+    def test_get_user_should_return_the_user_correctly_by_username(self):
+        with vcr.use_cassette('get_user_by_username_successful.json'):
+            resp = SSOAPIClient().get_user('user')
+
+        with vcr.use_cassette('get_user_by_username_successful.json'):
+            exp_resp = SSOAPIClient()._get('/user_by_login', {'login': 'user'})
+            exp_resp['username'] = exp_resp.pop('login')
+
+        self.assertEqual(exp_resp, resp)
+

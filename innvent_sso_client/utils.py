@@ -52,3 +52,13 @@ class SSOAPIClient(object):
             'last_name': user_kwargs.get('last_name', ''),
         }
         return {'id': self._post('/users', data)['created_user_id']}
+
+    def get_user(self, username):
+        resp = self._get('/user_by_login', data={'login': username})
+        resp['username'] = resp.pop('login')
+        return resp
+
+    def update_user(self, username, **user_kwargs):
+        user_id = self.get_user(username)['id']
+
+        resp = self._post('/users/{0}'.format(user_id), user_kwargs)
