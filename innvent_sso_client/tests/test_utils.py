@@ -47,8 +47,8 @@ class SSOAPIClientTestCase(unittest.TestCase):
                 'login': 'user',
                 'password': 'passwd',
                 'email': 'user@example.com',
-                'first_name': 'Test',
-                'last_name': 'User'
+                'firstname': 'Test',
+                'lastname': 'User'
             }
 
             exp_resp = SSOAPIClient()._post('/users', post_data)

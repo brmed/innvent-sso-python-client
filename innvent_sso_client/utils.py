@@ -48,8 +48,8 @@ class SSOAPIClient(object):
             'login': username,
             'password': passwd,
             'email': user_kwargs.get('email', ''),
-            'first_name': user_kwargs.get('first_name', ''),
-            'last_name': user_kwargs.get('last_name', ''),
+            'firstname': user_kwargs.get('first_name', ''),
+            'lastname': user_kwargs.get('last_name', ''),
         }
         return {'id': self._post('/users', data)['created_user_id']}
 
