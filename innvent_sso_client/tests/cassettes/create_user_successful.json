@@ -3,8 +3,11 @@
     "interactions": [
         {
             "request": {
-                "body": "login=user&password=passwd&email=user%40example.com&firstname=Test&lastname=User", 
+                "method": "POST", 
                 "headers": {
+                    "Content-Type": [
+                        "application/x-www-form-urlencoded"
+                    ], 
                     "Authorization": [
                         "Basic dGVzdF9jbGllbnRfc3NvOjI4ZTFlYTgxNWU3NGMzMTM3OWI3MThlOGQ3MDAwMGY5M2I5MjhiZDU="
                     ], 
@@ -14,55 +17,52 @@
                     "Accept": [
                         "*/*"
                     ], 
-                    "User-Agent": [
-                        "python-requests/2.4.1 CPython/2.7.8 Linux/3.12.33-1-MANJARO"
+                    "Content-Length": [
+                        "80"
                     ], 
-                    "Content-Type": [
-                        "application/x-www-form-urlencoded"
+                    "User-Agent": [
+                        "Innvent SSO Python Client"
                     ], 
                     "Accept-Encoding": [
                         "gzip, deflate"
-                    ], 
-                    "Content-Length": [
-                        "80"
                     ]
                 }, 
-                "method": "POST", 
+                "body": "login=user&firstname=Test&lastname=User&password=passwd&email=user%40example.com", 
                 "uri": "http://devsso:9292/users"
-            },
+            }, 
             "response": {
+                "status": {
+                    "code": 200, 
+                    "message": "OK"
+                }, 
+                "body": {
+                    "string": "{\"created_user_id\":2}"
+                }, 
                 "headers": {
-                    "date": [
-                        "Fri, 19 Dec 2014 18:08:23 GMT"
-                    ],
                     "content-type": [
                         "text/html;charset=utf-8"
-                    ],
-                    "x-content-type-options": [
-                        "nosniff"
-                    ],
-                    "x-frame-options": [
-                        "SAMEORIGIN"
-                    ],
-                    "server": [
-                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
-                    ],
-                    "x-xss-protection": [
-                        "1; mode=block"
-                    ],
-                    "content-length": [
-                        "21"
-                    ],
+                    ], 
+                    "date": [
+                        "Thu, 25 Dec 2014 22:08:17 GMT"
+                    ], 
                     "connection": [
                         "Keep-Alive"
+                    ], 
+                    "server": [
+                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
+                    ], 
+                    "x-xss-protection": [
+                        "1; mode=block"
+                    ], 
+                    "x-content-type-options": [
+                        "nosniff"
+                    ], 
+                    "content-length": [
+                        "21"
+                    ], 
+                    "x-frame-options": [
+                        "SAMEORIGIN"
                     ]
-                },
-                "body": {
-                    "string": "{\"created_user_id\":4}"
-                },
-                "status": {
-                    "message": "OK",
-                    "code": 200
                 }
             }
         }

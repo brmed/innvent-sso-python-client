@@ -21,8 +21,7 @@ class SSOAPIClient(object):
         self._session.auth = (
             settings.SSO_SERVICE_TOKEN, settings.SSO_SECRET_KEY
         )
-        agent = 'python-requests/2.4.1 CPython/2.7.8 Linux/3.12.33-1-MANJARO'
-        self._session.headers['User-Agent'] = agent
+        self._session.headers['User-Agent'] = 'Innvent SSO Python Client'
 
     def _request(self, method, path, data=None, **kwargs):
         url = sso_hostname(path)
