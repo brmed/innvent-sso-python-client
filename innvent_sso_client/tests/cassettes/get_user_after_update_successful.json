@@ -1,0 +1,70 @@
+{
+    "interactions": [
+        {
+            "request": {
+                "method": "GET", 
+                "headers": {
+                    "Authorization": [
+                        "Basic dGVzdF9jbGllbnRfc3NvOjI4ZTFlYTgxNWU3NGMzMTM3OWI3MThlOGQ3MDAwMGY5M2I5MjhiZDU="
+                    ], 
+                    "Connection": [
+                        "keep-alive"
+                    ], 
+                    "Content-Length": [
+                        "10"
+                    ], 
+                    "Accept": [
+                        "*/*"
+                    ], 
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ], 
+                    "Content-Type": [
+                        "application/x-www-form-urlencoded"
+                    ], 
+                    "User-Agent": [
+                        "Innvent SSO Python Client"
+                    ]
+                }, 
+                "uri": "http://devsso:9292/user_by_login", 
+                "body": "login=user"
+            }, 
+            "response": {
+                "status": {
+                    "code": 200, 
+                    "message": "OK"
+                }, 
+                "headers": {
+                    "server": [
+                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
+                    ], 
+                    "x-content-type-options": [
+                        "nosniff"
+                    ], 
+                    "connection": [
+                        "Keep-Alive"
+                    ], 
+                    "x-xss-protection": [
+                        "1; mode=block"
+                    ], 
+                    "content-length": [
+                        "89"
+                    ], 
+                    "date": [
+                        "Thu, 25 Dec 2014 22:29:53 GMT"
+                    ], 
+                    "content-type": [
+                        "text/html;charset=utf-8"
+                    ], 
+                    "x-frame-options": [
+                        "SAMEORIGIN"
+                    ]
+                }, 
+                "body": {
+                    "string": "{\"id\":2,\"login\":\"user\",\"email\":\"user@example.com\",\"first_name\":\"User\",\"last_name\":\"Test\"}"
+                }
+            }
+        }
+    ], 
+    "version": 1
+}

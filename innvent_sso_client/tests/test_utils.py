@@ -36,7 +36,7 @@ class SSOAPIClientTestCase(unittest.TestCase):
         with vcr.use_cassette('create_user_successful.json'):
             resp = SSOAPIClient().create_user(
                 username='user',
-                passwd='passwd',
+                password='passwd',
                 email='user@example.com',
                 first_name='Test',
                 last_name='User',
@@ -66,3 +66,17 @@ class SSOAPIClientTestCase(unittest.TestCase):
 
         self.assertEqual(exp_resp, resp)
 
+    def test_update_user_should_update_the_user_correctly_by_username(self):
+        with vcr.use_cassette('update_user_by_username_successful.json'):
+            update_resp = SSOAPIClient().update_user('user',
+                first_name='User',
+                last_name='Test',
+            )
+
+        self.assertTrue(update_resp)
+
+        with vcr.use_cassette('get_user_after_update_successful.json'):
+            get_user_resp = SSOAPIClient().get_user('user')
+
+        self.assertEqual(get_user_resp['first_name'], 'User')
+        self.assertEqual(get_user_resp['last_name'], 'Test')

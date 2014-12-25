@@ -53,9 +53,13 @@ class SSOAPIClient(object):
         return UserCompat.from_sso(resp)
 
     def update_user(self, username, **user_kwargs):
-        user_id = self.get_user(username)['id']
+        user_data = self.get_user(username)
 
-        resp = self._post('/users/{0}'.format(user_id), user_kwargs)
+        user_data.update(user_kwargs)
+        user_data = UserCompat.to_sso(user_data)
+
+        resp = self._post('/users/{0}'.format(user_data['id']), user_data)
+        return resp['updated_user_id'] != '0'
 
 
 class UserCompat(object):
