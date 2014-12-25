@@ -42,22 +42,34 @@ class SSOAPIClient(object):
         resp['expires_at'] = parse(resp['expires_at'], ignoretz=True)
         return resp
 
-    def create_user(self, username, passwd, **user_kwargs):
-        data = {
-            'login': username,
-            'password': passwd,
-            'email': user_kwargs.get('email', ''),
-            'firstname': user_kwargs.get('first_name', ''),
-            'lastname': user_kwargs.get('last_name', ''),
-        }
+    def create_user(self, username, password, **user_kwargs):
+        user_kwargs.update({'username': username, 'password': password})
+
+        data = UserCompat.to_sso(user_kwargs)
         return {'id': self._post('/users', data)['created_user_id']}
 
     def get_user(self, username):
         resp = self._get('/user_by_login', data={'login': username})
-        resp['username'] = resp.pop('login')
-        return resp
+        return UserCompat.from_sso(resp)
 
     def update_user(self, username, **user_kwargs):
         user_id = self.get_user(username)['id']
 
         resp = self._post('/users/{0}'.format(user_id), user_kwargs)
+
+
+class UserCompat(object):
+
+    @classmethod
+    def to_sso(cls, data):
+        data['login'] = data.pop('username')
+        data['firstname'] = data.pop('first_name')
+        data['lastname'] = data.pop('last_name')
+
+        return data
+
+    @classmethod
+    def from_sso(cls, data):
+        data['username'] = data.pop('login')
+
+        return data
