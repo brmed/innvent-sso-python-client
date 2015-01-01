@@ -8,6 +8,9 @@ from models import SSOUserToken
 class SSOBackend(ModelBackend):
 
     def authenticate(self, token=None, expiration_datetime=None, username=None, **kwargs):
+        if not all((token, expiration_datetime, username)):
+            return None
+
         UserModel = get_user_model()
         username_kwargs = {UserModel.USERNAME_FIELD: username}
 

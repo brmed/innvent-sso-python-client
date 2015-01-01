@@ -60,3 +60,8 @@ class SSOBackendTestCase(TestCase):
 
         self.assertEqual(1, SSOUserToken.objects.count())
         self.assertNotEqual(created_token.token, user.ssousertoken.token)
+
+    def test_should_return_none_if_no_token_or_expiration_is_present(self):
+        user = self.backend.authenticate(username='foo')
+
+        self.assertEqual(user, None)
