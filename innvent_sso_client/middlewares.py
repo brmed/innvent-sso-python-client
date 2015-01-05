@@ -79,8 +79,10 @@ class SSOMiddleware(object):
         user = user or request.user
 
         if user.is_authenticated():
-            if not hasattr(user, 'ssousertoken') or user.ssousertoken.has_expired:
-                logout(request)
+            if not hasattr(user, 'ssousertoken'):
                 return True
 
+            if user.ssousertoken.has_expired:
+                logout(request)
+                return True
 

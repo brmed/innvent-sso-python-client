@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from model_mommy import mommy
 
 from django.conf import settings
-from django.contrib.auth import SESSION_KEY, get_user_model, login, authenticate
+from django.contrib.auth import SESSION_KEY, get_user_model, login, logout, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, RequestFactory
@@ -176,13 +176,26 @@ class SSOMiddlewareTestCase(TestCase):
         request.session['SSO_TOKEN_EXPIRATION'] = expiration.isoformat()
 
         request.user = self.__create_user_and_log_it_in(request)
+        logout(request)
+
+        self.middleware.process_request(request)
+
+        self.assertUserNotAuthenticated(request)
+
+    def test_logged_in_user_without_sso_token_and_data_should_stay_logged_in(self):
+        request = self.factory.get(self.__get_url())
+        self.__build_session(request)
+
+        request.session['SSO_TOKEN'] = self.data['token']
+        expiration = datetime.now() + timedelta(days=1)
+        request.session['SSO_TOKEN_EXPIRATION'] = expiration.isoformat()
+
+        request.user = self.__create_user_and_log_it_in(request)
 
         # DELETA O TOKEN
         request.user.ssousertoken.delete()
         del request.user.__dict__['_ssousertoken_cache']
 
-        self.assertUserAuthenticated(request, request.user)
-
         self.middleware.process_request(request)
 
-        self.assertUserNotAuthenticated(request)
+        self.assertUserAuthenticated(request, request.user)
