@@ -32,8 +32,8 @@ class TestLoginRequiredMixin(object):
         qs['callback_url'] = 'http://testserver{0}'.format(self.url)
         redirect_url = sso_hostname('/login?{0}'.format(qs.urlencode(safe='/')))
 
-        self.assertRedirects(response, redirect_url)
-
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], redirect_url)
 
 class TestAjaxLoginRequiredMixin(object):
 
