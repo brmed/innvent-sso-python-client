@@ -23,7 +23,7 @@ class SSOAPIClientTestCase(unittest.TestCase):
             resp_dict = SSOAPIClient().retrieve_new_token()
 
         with vcr.use_cassette('access_token_valid.json'):
-            exp_resp = SSOAPIClient()._get('/access_token')
+            exp_resp = SSOAPIClient()._get('/access_token', cookies={'session_id': '1234'})
 
         self.assertIn('token', resp_dict.keys())
         self.assertEqual(resp_dict['token'], exp_resp['token'])

@@ -38,7 +38,7 @@ class SSOAPIClient(object):
         return self._request('post', path, data, **kwargs)
 
     def retrieve_new_token(self):
-        resp = self._get('/access_token')
+        resp = self._get('/access_token', cookies={'session_id': '1234'})
         resp['expires_at'] = parse(resp['expires_at'], ignoretz=True)
         return resp
 
