@@ -29,8 +29,8 @@ SECRET_KEY = 'this_is_not_required'
 DEBUG = True
 
 SSO_HOST = 'http://devsso:9292'
-SSO_SERVICE_TOKEN = 'test_client_sso'
-SSO_SECRET_KEY = '28e1ea815e74c31379b718e8d70000f93b928bd5'
+SSO_SERVICE_TOKEN = 'sso_dev'
+SSO_SECRET_KEY = '8370e1fd0486968d3adf9cd9e48f25fb0873dec6'
 
 import django
 if django.get_version().startswith('1.5'):
