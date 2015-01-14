@@ -1,14 +1,16 @@
 # coding: utf-8
-import unittest
+from datetime import datetime
 from dateutil.parser import parse
+from mock import patch, Mock
 
 from django.conf import settings
+from django.test import TestCase
 
 from .testtools import vcr
 from ..utils import SSOAPIClient, sso_hostname
 
 
-class SSOAPIClientTestCase(unittest.TestCase):
+class SSOAPIClientTestCase(TestCase):
 
     def test_sso_client_must_have_a_correct_session_attached_to_it(self):
         client = SSOAPIClient()
@@ -31,6 +33,20 @@ class SSOAPIClientTestCase(unittest.TestCase):
         self.assertIn('expires_at', resp_dict.keys())
         expected_expires_at = parse(exp_resp['expires_at'], ignoretz=True)
         self.assertEqual(resp_dict['expires_at'], expected_expires_at)
+
+    @patch.object(SSOAPIClient, '_request')
+    def test_retrieve_new_token_should_use_sso_session_id_settings(self, mocked_method):
+        mocked_method.return_value = {'expires_at': datetime.now().isoformat()}
+
+        session_id = 'dummy_session'
+
+        with self.settings(SSO_SESSION_ID=session_id):
+            SSOAPIClient().retrieve_new_token()
+
+        call_args = ('get', '/access_token', None)
+        call_kwargs = {'cookies': {'session_id': session_id}}
+
+        mocked_method.assert_called_once_with(*call_args, **call_kwargs)
 
     def test_create_user_should_return_the_user_id(self):
         with vcr.use_cassette('create_user_successful.json'):
