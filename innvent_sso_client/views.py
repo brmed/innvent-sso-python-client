@@ -1,6 +1,7 @@
 # coding: utf-8
+from django.conf import settings
 from django.contrib.auth import logout as auth_logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, QueryDict
 
 from .decorators import sso_required
 from .utils import sso_hostname
