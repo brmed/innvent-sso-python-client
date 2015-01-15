@@ -14,7 +14,7 @@ def login(request):
 def logout(request):
     auth_logout(request)
     qs = QueryDict(None, mutable=True)
-    qs['callback_url'] = settings.SSO_LOGOUT_CALLBACK_URL
+    qs['callback_url'] = request.build_absolute_uri(settings.SSO_LOGOUT_CALLBACK_PATH)
 
     logout_url = '{0}?{1}'.format(sso_hostname('/logout'), qs.urlencode(safe='/'))
 
