@@ -48,9 +48,11 @@ class SSOMiddleware(object):
         if not user:
             return
 
-        if not self.logout_expired_token_user(request, user):
-            request.user = user
-            login(request, user)
+        if self.logout_expired_token_user(request, user):
+            return
+
+        request.user = user
+        login(request, user)
 
     def extract_user_data(self, request):
         b64_data = request.GET.get('data')
