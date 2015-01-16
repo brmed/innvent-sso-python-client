@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class SSOUserTokenManager(models.Manager):
@@ -32,4 +33,9 @@ class SSOUserToken(models.Model):
 
     @property
     def has_expired(self):
-        return datetime.now() > self.expiration_datetime
+        if timezone.is_aware(self.expiration_datetime):
+            now = timezone.now()
+        else:
+            now = datetime.now()
+
+        return now > self.expiration_datetime
