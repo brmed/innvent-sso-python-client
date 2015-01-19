@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.db import models
-
 import django
 if django.get_version().startswith('1.5'):
     # Migração para o django 1.5 usando south
@@ -10,6 +6,7 @@ if django.get_version().startswith('1.5'):
     import datetime
     from south.db import db
     from south.v2 import SchemaMigration
+    from django.db import models
 
     class Migration(SchemaMigration):
 
@@ -83,7 +80,7 @@ if django.get_version().startswith('1.5'):
 
 else:
     # Migração para o django 1.7
-    from django.db import migrations
+    from django.db import models, migrations
     from django.conf import settings
 
 
@@ -95,13 +92,13 @@ else:
 
         operations = [
             migrations.CreateModel(
-                name='SSOUserToken',
+                name=u'SSOUserToken',
                 fields=[
-                    ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                    ('token', models.CharField(unique=True, max_length=32)),
-                    ('expiration_datetime', models.DateTimeField()),
-                    ('last_modified', models.DateTimeField(auto_now=True)),
-                    ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                    (u'id', models.AutoField(verbose_name=u'ID', serialize=False, auto_created=True, primary_key=True)),
+                    (u'token', models.CharField(unique=True, max_length=32)),
+                    (u'expiration_datetime', models.DateTimeField()),
+                    (u'last_modified', models.DateTimeField(auto_now=True)),
+                    (u'user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
                 ],
                 options={
                 },
