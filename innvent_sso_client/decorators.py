@@ -20,7 +20,7 @@ def sso_required(view_func):
         qs['token'] = token_dict['token']
 
         redirect_url = '{0}?{1}'.format(
-            sso_hostname('/login'), qs.urlencode(safe='/')
+            sso_hostname('/authorize'), qs.urlencode(safe='/')
         )
 
         request.session["SSO_TOKEN"] = token_dict['token']
