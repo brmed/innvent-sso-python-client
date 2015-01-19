@@ -24,7 +24,7 @@ class SSORequiredTestCase(TestCase):
         qs['token'] = token
 
         expected_url = '{0}?{1}'.format(
-            sso_hostname('/login'), qs.urlencode(safe='/')
+            sso_hostname('/authorize'), qs.urlencode(safe='/')
         )
 
         with vcr.use_cassette('access_token_valid.json'):
