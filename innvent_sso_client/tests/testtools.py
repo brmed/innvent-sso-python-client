@@ -30,7 +30,7 @@ class TestLoginRequiredMixin(object):
         qs = QueryDict(None, mutable=True)
         qs['token'] = 'this_is_a_token'
         qs['callback_url'] = 'http://testserver{0}'.format(self.url)
-        redirect_url = sso_hostname('/login?{0}'.format(qs.urlencode(safe='/')))
+        redirect_url = sso_hostname('/authorize?{0}'.format(qs.urlencode(safe='/')))
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], redirect_url)
