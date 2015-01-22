@@ -2,9 +2,11 @@
 from datetime import datetime
 from dateutil.parser import parse
 from requests import Session
+import urlparse
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.http import QueryDict
 
 
 def sso_hostname(path):
@@ -78,3 +80,13 @@ class UserCompat(object):
         data['username'] = data.pop('login')
 
         return data
+
+
+def remove_data_from_url(url):
+    scheme, netloc, path, query, fragment = urlparse.urlsplit(url)
+
+    qs = QueryDict(query, mutable=True)
+    qs.pop('data', None)
+    query = qs.urlencode(safe='/')
+
+    return urlparse.urlunsplit([scheme, netloc, path, query, fragment])

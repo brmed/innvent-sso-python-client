@@ -7,7 +7,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from .testtools import vcr
-from ..utils import SSOAPIClient, sso_hostname
+from ..utils import SSOAPIClient, sso_hostname, remove_data_from_url
 
 
 class SSOAPIClientTestCase(TestCase):
@@ -96,3 +96,19 @@ class SSOAPIClientTestCase(TestCase):
 
         self.assertEqual(get_user_resp['first_name'], 'User')
         self.assertEqual(get_user_resp['last_name'], 'Test')
+
+
+class RemoveDataFromUrlTestCase(TestCase):
+
+    def test_should_remove_data_query_param_from_url(self):
+        expected_url = 'totally-a-url'
+        url = '{0}?data=none'.format(expected_url)
+
+        self.assertEqual(remove_data_from_url(url), expected_url)
+
+    def test_should_not_remove_other_query_params_from_url(self):
+        expected_url = 'totally-a-url?other=param'
+        url = '{0}&data=none'.format(expected_url)
+
+        self.assertEqual(remove_data_from_url(url), expected_url)
+
