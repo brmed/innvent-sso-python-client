@@ -1,8 +1,8 @@
 # coding: utf-8
+import urlparse
 from datetime import datetime
 from dateutil.parser import parse
 from requests import Session
-import urlparse
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
