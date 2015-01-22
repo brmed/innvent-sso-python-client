@@ -9,7 +9,10 @@ from django.utils import timezone
 class SSOUserTokenManager(models.Manager):
 
     def create_or_update(self, user, token, expiration_datetime):
-        qs = self.get_query_set()
+        if hasattr(self, 'get_queryset'):
+            qs = self.get_queryset()
+        else:
+            qs = self.get_query_set()
 
         try:
             user_token = qs.get(user=user)
