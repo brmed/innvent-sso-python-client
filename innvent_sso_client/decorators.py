@@ -3,7 +3,7 @@ from functools import wraps
 
 from django.http import QueryDict, HttpResponseRedirect, HttpResponseForbidden
 
-from .utils import sso_hostname, SSOAPIClient
+from .utils import sso_hostname, SSOAPIClient, remove_data_from_url
 
 
 def sso_required(view_func):
@@ -15,8 +15,10 @@ def sso_required(view_func):
 
         token_dict = SSOAPIClient().retrieve_new_token()
 
+        callback_url = remove_data_from_url(request.build_absolute_uri())
+
         qs = QueryDict(None, mutable=True)
-        qs['callback_url'] = request.build_absolute_uri()
+        qs['callback_url'] = callback_url
         qs['token'] = token_dict['token']
 
         redirect_url = '{0}?{1}'.format(
