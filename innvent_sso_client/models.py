@@ -6,6 +6,9 @@ from django.db import models
 from django.utils import timezone
 
 
+class DuplicatedTokenException(Exception):
+    pass
+
 class SSOUserTokenManager(models.Manager):
 
     def create_or_update(self, user, token, expiration_datetime):
@@ -13,6 +16,9 @@ class SSOUserTokenManager(models.Manager):
             qs = self.get_queryset()
         else:
             qs = self.get_query_set()
+
+        if qs.filter(token=token).exclude(user=user).exists():
+            raise DuplicatedTokenException
 
         try:
             user_token = qs.get(user=user)
