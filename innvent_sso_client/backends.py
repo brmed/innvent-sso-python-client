@@ -2,7 +2,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 
-from models import SSOUserToken
+from models import SSOUserToken, DuplicatedTokenException
 
 
 class SSOBackend(ModelBackend):
@@ -24,6 +24,10 @@ class SSOBackend(ModelBackend):
                 **username_kwargs
             )
 
-        SSOUserToken.objects.create_or_update(user, token, expiration_datetime)
+        try:
+            SSOUserToken.objects.create_or_update(user, token, expiration_datetime)
 
-        return user
+            return user
+        except DuplicatedTokenException:
+            return None
+

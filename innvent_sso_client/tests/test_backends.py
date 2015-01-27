@@ -15,12 +15,12 @@ class SSOBackendTestCase(TestCase):
         self.UserModel = get_user_model()
         self.expiration_datetime = datetime.now() + timedelta(days=1)
         self.backend_kwargs = {
-            'username': 'foo',
-            'email': 'foo@foo.com',
-            'first_name': 'foo',
-            'last_name': 'bar',
-            'token': '123123',
-            'expiration_datetime': self.expiration_datetime,
+            u'username': u'foo',
+            u'email': u'foo@foo.com',
+            u'first_name': u'foo',
+            u'last_name': u'bar',
+            u'token': u'123123',
+            u'expiration_datetime': self.expiration_datetime,
         }
         self.backend = SSOBackend()
 
@@ -65,3 +65,21 @@ class SSOBackendTestCase(TestCase):
         user = self.backend.authenticate(username='foo')
 
         self.assertEqual(user, None)
+
+    def test_should_return_none_if_token_is_present_with_a_different_user(self):
+        created_user = mommy.make(self.UserModel)
+        created_token = mommy.make(SSOUserToken, token=self.backend_kwargs['token'], user=created_user)
+
+        user = self.backend.authenticate(**self.backend_kwargs)
+
+        self.assertIsNone(user)
+
+    def test_updates_sso_user_token_if_it_already_exists_and_has_the_same_key(self):
+        created_user = mommy.make(self.UserModel, username=self.backend_kwargs['username'])
+        created_token = mommy.make(SSOUserToken, token=self.backend_kwargs['token'], user=created_user)
+
+        user = self.backend.authenticate(**self.backend_kwargs)
+
+        self.assertEqual(1, SSOUserToken.objects.count())
+        self.assertEqual(created_token.token, user.ssousertoken.token)
+
