@@ -9,7 +9,7 @@ class SSOUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super(SSOUserCreationForm, self).save(commit)
 
-        SSOAPIClient().create_user(
+        SSOAPIClient().create_or_update_user(
             username=user.username,
             password=self.cleaned_data['password1'],
             first_name=user.first_name,
