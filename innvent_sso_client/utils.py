@@ -3,6 +3,7 @@ import urlparse
 from datetime import datetime
 from dateutil.parser import parse
 from requests import Session
+from requests.exceptions import HTTPError
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -63,6 +64,13 @@ class SSOAPIClient(object):
 
         resp = self._post('/users/{0}'.format(user_data['id']), user_data)
         return resp['updated_user_id'] != '0'
+
+    def create_or_update_user(self, *args, **kwargs):
+        try:
+            self.create_user(*args, **kwargs)
+            return True
+        except HTTPError:
+            self.update_user(*args, **kwargs)
 
 
 class UserCompat(object):

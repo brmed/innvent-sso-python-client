@@ -97,6 +97,31 @@ class SSOAPIClientTestCase(TestCase):
         self.assertEqual(get_user_resp['first_name'], 'User')
         self.assertEqual(get_user_resp['last_name'], 'Test')
 
+    def test_create_or_update_user_should_return_the_user_id(self):
+        with vcr.use_cassette('create_or_update_user__create.json'):
+            resp = SSOAPIClient().create_or_update_user(
+                username='user',
+                password='passwd',
+                email='user@example.com',
+                first_name='Test',
+                last_name='User',
+            )
+
+        self.assertTrue(resp)
+
+    def test_create_or_update_user_should_return_the_user_id(self):
+        with vcr.use_cassette('create_or_update_user__update.json'):
+            resp = SSOAPIClient().create_or_update_user(
+                username='user',
+                password='passwd',
+                email='user@example.com',
+                first_name='Test',
+                last_name='User',
+            )
+
+        self.assertFalse(resp)
+
+
 
 class RemoveDataFromUrlTestCase(TestCase):
 
