@@ -1,5 +1,5 @@
 # coding: utf-8
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm
 
 from .utils import SSOAPIClient
 
@@ -35,7 +35,7 @@ class SSOUserChangeForm(UserChangeForm):
         return user
 
 
-class SSOPasswordChangeForm(PasswordChangeForm):
+class SSOSetPasswordForm(SetPasswordForm):
 
     def save(self, commit=True):
         SSOAPIClient().update_user(
@@ -46,4 +46,4 @@ class SSOPasswordChangeForm(PasswordChangeForm):
             email=self.user.email,
         )
 
-        return super(SSOPasswordChangeForm, self).save(commit)
+        return super(SSOSetPasswordForm, self).save(commit)

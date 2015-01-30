@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from ..utils import SSOAPIClient
-from ..forms import SSOUserCreationForm, SSOUserChangeForm, SSOPasswordChangeForm
+from ..forms import SSOUserCreationForm, SSOUserChangeForm, SSOSetPasswordForm
 
 
 class SSOUserCreationFormTestCase(TestCase):
@@ -55,5 +55,26 @@ class SSOUserChangeFormTestCase(TestCase):
             'first_name': 'name',
             'last_name': 'last_name',
             'email': 'email@email.com',
+        }
+        mocked_api_call.assert_called_once_with(**call_kwargs)
+
+
+class SSOSetPasswordFormTestcase(TestCase):
+
+    @patch.object(SSOAPIClient, 'update_user')
+    def test_calls_sso_api_client_correctly(self, mocked_api_call):
+        user = mommy.make(get_user_model())
+        data = {'new_password1': 'foo', 'new_password2': 'foo'}
+
+        form = SSOSetPasswordForm(user, data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        call_kwargs = {
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'password': 'foo',
         }
         mocked_api_call.assert_called_once_with(**call_kwargs)
