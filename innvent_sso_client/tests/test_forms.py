@@ -1,6 +1,8 @@
 # coding: utf-8
 from mock import patch
+from model_mommy import mommy
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from ..utils import SSOAPIClient
@@ -29,4 +31,29 @@ class SSOUserCreationFormTestCase(TestCase):
             'email': '',
         }
         mocked_api_call.assert_called_once_with(**call_kwargs)
+
+
+class SSOUserChangeFormTestCase(TestCase):
+
+    @patch.object(SSOAPIClient, 'update_user')
+    def test_calls_sso_api_client_correctly(self, mocked_api_call):
+        user = mommy.make(get_user_model(), username='foo')
+        form = SSOUserChangeForm(instance=user)
+        data = form.initial.copy()
+        data.update({
+            'first_name': 'name',
+            'last_name': 'last_name',
+            'email': 'email@email.com',
+        })
+
+        form = SSOUserChangeForm(data, instance=user)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        call_kwargs = {
+            'username': 'foo',
+            'first_name': 'name',
+            'last_name': 'last_name',
+            'email': 'email@email.com',
+        }
         mocked_api_call.assert_called_once_with(**call_kwargs)
