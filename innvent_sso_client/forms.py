@@ -1,5 +1,5 @@
 # coding: utf-8
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm, PasswordChangeForm
 
 from .utils import SSOAPIClient
 
@@ -47,3 +47,17 @@ class SSOSetPasswordForm(SetPasswordForm):
         )
 
         return super(SSOSetPasswordForm, self).save(commit)
+
+
+class SSOPasswordChangeForm(PasswordChangeForm):
+
+    def save(self, *args, **kwargs):
+        SSOAPIClient().update_user(
+            username=self.user.username,
+            password=self.cleaned_data['new_password1'],
+            first_name=self.user.first_name,
+            last_name=self.user.last_name,
+            email=self.user.email,
+        )
+
+        return super(SSOPasswordChangeForm, self).save(*args, **kwargs)
