@@ -72,6 +72,15 @@ class SSOAPIClient(object):
         except HTTPError:
             self.update_user(*args, **kwargs)
 
+    def list_users(self, page=1, limit=50):
+        resp = self._get('/users/', data={'page': page, 'limit': limit})
+
+        return {
+            'users': [UserCompat.from_sso(u) for u in resp['results']],
+            'total_pages': resp['total_pages'],
+            'count': resp['total_count'],
+        }
+
 
 class UserCompat(object):
 

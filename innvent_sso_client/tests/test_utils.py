@@ -121,6 +121,15 @@ class SSOAPIClientTestCase(TestCase):
 
         self.assertFalse(resp)
 
+    def test_list_users_should_return_the_correct_dict(self):
+        with vcr.use_cassette('list_users.json'):
+            resp = SSOAPIClient().list_users()
+
+        self.assertIn('total_pages', resp)
+        self.assertIn('count', resp)
+
+        self.assertIn('users', resp)
+        self.assertIsInstance(resp['users'], list)
 
 
 class RemoveDataFromUrlTestCase(TestCase):
