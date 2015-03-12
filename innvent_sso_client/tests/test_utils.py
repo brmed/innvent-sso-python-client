@@ -43,8 +43,8 @@ class SSOAPIClientTestCase(TestCase):
         with self.settings(SSO_SESSION_ID=session_id):
             SSOAPIClient().retrieve_new_token()
 
-        call_args = ('get', '/access_token', None)
-        call_kwargs = {'cookies': {'session_id': session_id}}
+        call_args = ('get', '/access_token')
+        call_kwargs = {'cookies': {'session_id': session_id}, 'params': None}
 
         mocked_method.assert_called_once_with(*call_args, **call_kwargs)
 

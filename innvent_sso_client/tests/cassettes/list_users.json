@@ -1,70 +1,64 @@
 {
-    "version": 1, 
     "interactions": [
         {
-            "request": {
-                "body": "limit=50&page=1", 
+            "response": {
+                "body": {
+                    "string": "{\"next\":\"http://devsso:9292/users/?page=2&limit=50\",\"previous\":null,\"total_pages\":19,\"total_count\":907,\"results\":[{\"login\":\"admin\",\"email\":\"admin@admin.com\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"sudo\",\"email\":\"desenvolvimentobrmed@innvent.com.br\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1753\",\"email\":\"ugues.barboza@deltaconstrucao.com.br\",\"first_name\":\"UGUES\",\"last_name\":\"BARBOSA\"},{\"login\":\"facility_petrobras\",\"email\":\"maxwel.goncalves@facilitynet.com.br\",\"first_name\":\"FACILITY\",\"last_name\":\"PETROBR\u00c1S\"},{\"login\":\"hku\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"debora\",\"email\":\"debora@brmedconsultoria.com.br\",\"first_name\":\"D\u00c9BORA\",\"last_name\":\"VALEN\u00c7A\"},{\"login\":\"eas2012\",\"email\":\"\",\"first_name\":\"EAS\",\"last_name\":\"\"},{\"login\":\"cmv_refeicoes\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"00.182\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"amercianboreau\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"junio2\",\"email\":\"\",\"first_name\":\"JUNIO\",\"last_name\":\"DUARTE\"},{\"login\":\"leandro_alvino\",\"email\":\"\",\"first_name\":\"Leandro \",\"last_name\":\"Alvino\"},{\"login\":\"gpa\",\"email\":\"\",\"first_name\":\"GPA\",\"last_name\":\"\"},{\"login\":\"charles\",\"email\":\"charles@brmedconsultoria.com.br\",\"first_name\":\"CHARLES\",\"last_name\":\"AGUIAR\"},{\"login\":\"juan\",\"email\":\"recepcao@brmedconsultoria.com.br\",\"first_name\":\"JUAN\",\"last_name\":\"VICENTE\"},{\"login\":\"friburgo\",\"email\":\"\",\"first_name\":\"FRIBURGO\",\"last_name\":\"\"},{\"login\":\"cintia2\",\"email\":\"\",\"first_name\":\"CINTIA\",\"last_name\":\"BORGES\"},{\"login\":\"msmontagens\",\"email\":\"email@email.com\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"kairocesar\",\"email\":\"kairo@brmedconsultoria.com.br\",\"first_name\":\"KAIRO\",\"last_name\":\"CESAR\"},{\"login\":\"cc0020\",\"email\":\"alair.ferraz@deltaconstrucao.com.br\",\"first_name\":\"ALAIR\",\"last_name\":\"FERRAZ\"},{\"login\":\"junio\",\"email\":\"brmedaudio@hotmail.com\",\"first_name\":\"JUNIO\",\"last_name\":\"DUARTE\"},{\"login\":\"fabricio\",\"email\":\"\",\"first_name\":\"FABRICIO\",\"last_name\":\"NETTO\"},{\"login\":\"cc1612\",\"email\":\"jose.ricardo@deltaconstrucao.com.br\",\"first_name\":\"JOSE\",\"last_name\":\"RICARDO\"},{\"login\":\"cc1658\",\"email\":\"adeilton.souza@deltaconstrucao.com.br\",\"first_name\":\"ADEILTON\",\"last_name\":\"SOUZA\"},{\"login\":\"daviquissama\",\"email\":\"davi@brmedconsultoria.com.br\",\"first_name\":\"DAVI\",\"last_name\":\"BARCELOS\"},{\"login\":\"bienclin\",\"email\":\"\",\"first_name\":\"BIENCLIN\",\"last_name\":\"\"},{\"login\":\"estrela\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"gabrielsg\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"clinipraias\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"marnia_niteroi\",\"email\":\"expedicao@grupobrmed.com.br\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1686\",\"email\":\"adriana.santos@deltaconstrucao.com.br\",\"first_name\":\"ADRIANA\",\"last_name\":\"SANTOS\"},{\"login\":\"fisioterapianit\",\"email\":\"\",\"first_name\":\"FISIOTERAPIA\",\"last_name\":\"NITEROI\"},{\"login\":\"portogalo\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1726\",\"email\":\"paulo.souza@deltaconstrucao.com.br\",\"first_name\":\"Paulo\",\"last_name\":\"Souza\"},{\"login\":\"cc0021\",\"email\":\"alair.ferraz@deltaconstrucao.com.br\",\"first_name\":\"ALAIR\",\"last_name\":\"FERRAZ\"},{\"login\":\"pernambucoexpressoes\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1135\",\"email\":\"ugues.barboza@deltaconstrucao.com.br\",\"first_name\":\"ugues\",\"last_name\":\"barboza\"},{\"login\":\"cc1569\",\"email\":\"ugues.barboza@deltaconstrucao.com.br\",\"first_name\":\"ugues\",\"last_name\":\"barboza\"},{\"login\":\"cc1583\",\"email\":\"maria.marques@deltaconstrucao.com.br\",\"first_name\":\"Maria\",\"last_name\":\"Geny\"},{\"login\":\"cc1624\",\"email\":\"maria.marques@deltaconstrucao.com.br\",\"first_name\":\"Maria\",\"last_name\":\"Geny\"},{\"login\":\"cc1748\",\"email\":\"leandro.cassano@deltaconstrucao.com.br\",\"first_name\":\"LEANDRO\",\"last_name\":\"CASSANO\"},{\"login\":\"anacarolinalima\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"toprio_alvorada\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"zemar\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"adriananeves\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1170\",\"email\":\"alexandre.santos@deltaconstrucao.com.br\",\"first_name\":\"ALEXANDRE\",\"last_name\":\"SANTOS\"},{\"login\":\"senhordobonfim\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"toprio_maranello\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"tatiane\",\"email\":\"\",\"first_name\":\"TATIANE\",\"last_name\":\"TARGINO\"},{\"login\":\"divinaluz\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"}]}"
+                }, 
                 "headers": {
-                    "Content-Type": [
-                        "application/x-www-form-urlencoded"
+                    "content-type": [
+                        "text/html;charset=utf-8"
+                    ], 
+                    "date": [
+                        "Thu, 12 Mar 2015 00:54:57 GMT"
+                    ], 
+                    "x-xss-protection": [
+                        "1; mode=block"
+                    ], 
+                    "connection": [
+                        "Keep-Alive"
+                    ], 
+                    "content-length": [
+                        "4416"
+                    ], 
+                    "server": [
+                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
+                    ], 
+                    "x-frame-options": [
+                        "SAMEORIGIN"
+                    ], 
+                    "x-content-type-options": [
+                        "nosniff"
+                    ]
+                }, 
+                "status": {
+                    "message": "OK", 
+                    "code": 200
+                }
+            }, 
+            "request": {
+                "body": null, 
+                "headers": {
+                    "User-Agent": [
+                        "Innvent SSO Python Client"
                     ], 
                     "Authorization": [
                         "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
                     ], 
-                    "Connection": [
-                        "keep-alive"
-                    ], 
                     "Accept": [
                         "*/*"
                     ], 
-                    "User-Agent": [
-                        "Innvent SSO Python Client"
-                    ], 
-                    "Content-Length": [
-                        "15"
+                    "Connection": [
+                        "keep-alive"
                     ], 
                     "Accept-Encoding": [
                         "gzip, deflate"
                     ]
                 }, 
                 "method": "GET", 
-                "uri": "http://devsso:9292/users/"
-            }, 
-            "response": {
-                "status": {
-                    "message": "OK", 
-                    "code": 200
-                }, 
-                "headers": {
-                    "date": [
-                        "Wed, 11 Mar 2015 20:48:58 GMT"
-                    ], 
-                    "x-frame-options": [
-                        "SAMEORIGIN"
-                    ], 
-                    "content-type": [
-                        "text/html;charset=utf-8"
-                    ], 
-                    "connection": [
-                        "Keep-Alive"
-                    ], 
-                    "server": [
-                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
-                    ], 
-                    "content-length": [
-                        "4416"
-                    ], 
-                    "x-xss-protection": [
-                        "1; mode=block"
-                    ], 
-                    "x-content-type-options": [
-                        "nosniff"
-                    ]
-                }, 
-                "body": {
-                    "string": "{\"next\":\"http://devsso:9292/users/?page=2&limit=50\",\"previous\":null,\"total_pages\":19,\"total_count\":906,\"results\":[{\"login\":\"admin\",\"email\":\"admin@admin.com\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"sudo\",\"email\":\"desenvolvimentobrmed@innvent.com.br\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1753\",\"email\":\"ugues.barboza@deltaconstrucao.com.br\",\"first_name\":\"UGUES\",\"last_name\":\"BARBOSA\"},{\"login\":\"facility_petrobras\",\"email\":\"maxwel.goncalves@facilitynet.com.br\",\"first_name\":\"FACILITY\",\"last_name\":\"PETROBR\u00c1S\"},{\"login\":\"hku\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"debora\",\"email\":\"debora@brmedconsultoria.com.br\",\"first_name\":\"D\u00c9BORA\",\"last_name\":\"VALEN\u00c7A\"},{\"login\":\"eas2012\",\"email\":\"\",\"first_name\":\"EAS\",\"last_name\":\"\"},{\"login\":\"cmv_refeicoes\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"00.182\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"amercianboreau\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"junio2\",\"email\":\"\",\"first_name\":\"JUNIO\",\"last_name\":\"DUARTE\"},{\"login\":\"leandro_alvino\",\"email\":\"\",\"first_name\":\"Leandro \",\"last_name\":\"Alvino\"},{\"login\":\"gpa\",\"email\":\"\",\"first_name\":\"GPA\",\"last_name\":\"\"},{\"login\":\"charles\",\"email\":\"charles@brmedconsultoria.com.br\",\"first_name\":\"CHARLES\",\"last_name\":\"AGUIAR\"},{\"login\":\"juan\",\"email\":\"recepcao@brmedconsultoria.com.br\",\"first_name\":\"JUAN\",\"last_name\":\"VICENTE\"},{\"login\":\"friburgo\",\"email\":\"\",\"first_name\":\"FRIBURGO\",\"last_name\":\"\"},{\"login\":\"cintia2\",\"email\":\"\",\"first_name\":\"CINTIA\",\"last_name\":\"BORGES\"},{\"login\":\"msmontagens\",\"email\":\"email@email.com\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"kairocesar\",\"email\":\"kairo@brmedconsultoria.com.br\",\"first_name\":\"KAIRO\",\"last_name\":\"CESAR\"},{\"login\":\"cc0020\",\"email\":\"alair.ferraz@deltaconstrucao.com.br\",\"first_name\":\"ALAIR\",\"last_name\":\"FERRAZ\"},{\"login\":\"junio\",\"email\":\"brmedaudio@hotmail.com\",\"first_name\":\"JUNIO\",\"last_name\":\"DUARTE\"},{\"login\":\"fabricio\",\"email\":\"\",\"first_name\":\"FABRICIO\",\"last_name\":\"NETTO\"},{\"login\":\"cc1612\",\"email\":\"jose.ricardo@deltaconstrucao.com.br\",\"first_name\":\"JOSE\",\"last_name\":\"RICARDO\"},{\"login\":\"cc1658\",\"email\":\"adeilton.souza@deltaconstrucao.com.br\",\"first_name\":\"ADEILTON\",\"last_name\":\"SOUZA\"},{\"login\":\"daviquissama\",\"email\":\"davi@brmedconsultoria.com.br\",\"first_name\":\"DAVI\",\"last_name\":\"BARCELOS\"},{\"login\":\"bienclin\",\"email\":\"\",\"first_name\":\"BIENCLIN\",\"last_name\":\"\"},{\"login\":\"estrela\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"gabrielsg\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"clinipraias\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"marnia_niteroi\",\"email\":\"expedicao@grupobrmed.com.br\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1686\",\"email\":\"adriana.santos@deltaconstrucao.com.br\",\"first_name\":\"ADRIANA\",\"last_name\":\"SANTOS\"},{\"login\":\"fisioterapianit\",\"email\":\"\",\"first_name\":\"FISIOTERAPIA\",\"last_name\":\"NITEROI\"},{\"login\":\"portogalo\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1726\",\"email\":\"paulo.souza@deltaconstrucao.com.br\",\"first_name\":\"Paulo\",\"last_name\":\"Souza\"},{\"login\":\"cc0021\",\"email\":\"alair.ferraz@deltaconstrucao.com.br\",\"first_name\":\"ALAIR\",\"last_name\":\"FERRAZ\"},{\"login\":\"pernambucoexpressoes\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1135\",\"email\":\"ugues.barboza@deltaconstrucao.com.br\",\"first_name\":\"ugues\",\"last_name\":\"barboza\"},{\"login\":\"cc1569\",\"email\":\"ugues.barboza@deltaconstrucao.com.br\",\"first_name\":\"ugues\",\"last_name\":\"barboza\"},{\"login\":\"cc1583\",\"email\":\"maria.marques@deltaconstrucao.com.br\",\"first_name\":\"Maria\",\"last_name\":\"Geny\"},{\"login\":\"cc1624\",\"email\":\"maria.marques@deltaconstrucao.com.br\",\"first_name\":\"Maria\",\"last_name\":\"Geny\"},{\"login\":\"cc1748\",\"email\":\"leandro.cassano@deltaconstrucao.com.br\",\"first_name\":\"LEANDRO\",\"last_name\":\"CASSANO\"},{\"login\":\"anacarolinalima\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"toprio_alvorada\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"zemar\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"adriananeves\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"cc1170\",\"email\":\"alexandre.santos@deltaconstrucao.com.br\",\"first_name\":\"ALEXANDRE\",\"last_name\":\"SANTOS\"},{\"login\":\"senhordobonfim\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"toprio_maranello\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"},{\"login\":\"tatiane\",\"email\":\"\",\"first_name\":\"TATIANE\",\"last_name\":\"TARGINO\"},{\"login\":\"divinaluz\",\"email\":\"\",\"first_name\":\"\",\"last_name\":\"\"}]}"
-                }
+                "uri": "http://devsso:9292/users/?page=1&limit=50"
             }
         }
-    ]
+    ], 
+    "version": 1
 }

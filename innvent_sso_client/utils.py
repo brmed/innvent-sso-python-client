@@ -26,16 +26,16 @@ class SSOAPIClient(object):
         )
         self._session.headers['User-Agent'] = 'Innvent SSO Python Client'
 
-    def _request(self, method, path, data=None, **kwargs):
+    def _request(self, method, path, data=None, params=None, **kwargs):
         url = sso_hostname(path)
 
-        resp = self._session.request(method, url, data=data, **kwargs)
+        resp = self._session.request(method, url, data=data, params=params, **kwargs)
         resp.raise_for_status()
 
         return resp.json()
 
     def _get(self, path, data=None, **kwargs):
-        return self._request('get', path, data, **kwargs)
+        return self._request('get', path, params=data, **kwargs)
 
     def _post(self, path, data=None, **kwargs):
         return self._request('post', path, data, **kwargs)
