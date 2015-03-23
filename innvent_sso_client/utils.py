@@ -72,8 +72,13 @@ class SSOAPIClient(object):
         except HTTPError:
             self.update_user(*args, **kwargs)
 
-    def list_users(self, page=1, limit=50):
-        resp = self._get('/users/', data={'page': page, 'limit': limit})
+    def list_users(self, username=None, page=1, limit=50):
+        get_params = {'page': page, 'limit': limit}
+
+        if username:
+            get_params.update({'login': username})
+
+        resp = self._get('/users/', data=get_params)
 
         return {
             'users': [UserCompat.from_sso(u) for u in resp['results']],
