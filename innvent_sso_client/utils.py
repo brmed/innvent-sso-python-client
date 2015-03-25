@@ -53,7 +53,7 @@ class SSOAPIClient(object):
         return {'id': self._post('/users', data)['created_user_id']}
 
     def get_user(self, username):
-        resp = self._get('/user_by_login', data={'login': username})
+        resp = self._get('/user_by_login', data=json.dumps({'login': username}))
         return UserCompat.from_sso(resp)
 
     def update_user(self, username, **user_kwargs):
