@@ -1,5 +1,4 @@
 # coding: utf-8
-import json
 import urlparse
 from datetime import datetime
 from dateutil.parser import parse
@@ -74,7 +73,7 @@ class SSOAPIClient(object):
             self.update_user(*args, **kwargs)
 
     def create_invalid_user(self, usernames):
-        return self._post('/create-invalid-users/', data=json.dumps({'logins': usernames}))
+        return self._post('/create-invalid-users/', data={'logins': ','.join(usernames)})
 
     def list_users(self, username=None, page=1, limit=50):
         get_params = {'page': page, 'limit': limit}
