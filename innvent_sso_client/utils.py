@@ -72,6 +72,9 @@ class SSOAPIClient(object):
         except HTTPError:
             self.update_user(*args, **kwargs)
 
+    def create_invalid_user(self, usernames):
+        return self._post('/create-invalid-users/', data={'logins': usernames})
+
     def list_users(self, username=None, page=1, limit=50):
         get_params = {'page': page, 'limit': limit}
 
