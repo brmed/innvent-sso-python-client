@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 import urlparse
 from datetime import datetime
 from dateutil.parser import parse
@@ -53,7 +54,7 @@ class SSOAPIClient(object):
         return {'id': self._post('/users', data)['created_user_id']}
 
     def get_user(self, username):
-        resp = self._get('/user_by_login', data=json.dumps({'login': username}))
+        resp = self._get('/user_by_login', data={'login': username})
         return UserCompat.from_sso(resp)
 
     def update_user(self, username, **user_kwargs):
@@ -73,7 +74,7 @@ class SSOAPIClient(object):
             self.update_user(*args, **kwargs)
 
     def create_invalid_user(self, usernames):
-        return self._post('/create-invalid-users/', data={'logins': usernames})
+        return self._post('/create-invalid-users/', data=json.dumps({'logins': usernames}))
 
     def list_users(self, username=None, page=1, limit=50):
         get_params = {'page': page, 'limit': limit}
