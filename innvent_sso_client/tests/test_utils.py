@@ -131,6 +131,54 @@ class SSOAPIClientTestCase(TestCase):
         self.assertIn('users', resp)
         self.assertIsInstance(resp['users'], list)
 
+    def test_add_application_should_update_user_with_the_added_application(self):
+        with vcr.use_cassette('add_application_to_user_success.json'):
+            resp = SSOAPIClient().add_application_to_user('sudo', 'test-app')
+
+        self.assertTrue(resp)
+
+        with vcr.use_cassette('get_user_after_successful_application_addition.json'):
+            user = SSOAPIClient().get_user('sudo')
+
+        self.assertIn('applications', user)
+        self.assertIn('test-app', user['applications'])
+
+    def test_failed_add_application_should_not_update_user_with_the_added_application(self):
+        with vcr.use_cassette('add_application_to_user_failure.json'):
+            resp = SSOAPIClient().add_application_to_user('sudo', 'Must be slug')
+
+        self.assertFalse(resp)
+
+        with vcr.use_cassette('get_user_after_failed_application_addition.json'):
+            user = SSOAPIClient().get_user('sudo')
+
+        self.assertIn('applications', user)
+        self.assertNotIn('Must be slug', user['applications'])
+
+    def test_remove_application_should_update_user_with_the_removed_application(self):
+        with vcr.use_cassette('remove_application_from_user_success.json'):
+            resp = SSOAPIClient().remove_application_from_user('sudo', 'test-app')
+
+        self.assertTrue(resp)
+
+        with vcr.use_cassette('get_user_after_successful_application_remove.json'):
+            user = SSOAPIClient().get_user('sudo')
+
+        self.assertIn('applications', user)
+        self.assertNotIn('test-app', user['applications'])
+
+    def test_failed_remove_application_should_not_update_user_with_the_removed_application(self):
+        with vcr.use_cassette('remove_application_from_user_failure.json'):
+            resp = SSOAPIClient().remove_application_from_user('sudo', 'Must be slug')
+
+        self.assertFalse(resp)
+
+        with vcr.use_cassette('get_user_after_failed_application_remove.json'):
+            user = SSOAPIClient().get_user('sudo')
+
+        self.assertIn('applications', user)
+        self.assertNotIn('test-app', user['applications'])
+
 
 class RemoveDataFromUrlTestCase(TestCase):
 

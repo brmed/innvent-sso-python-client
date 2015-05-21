@@ -1,0 +1,64 @@
+{
+    "version": 1, 
+    "interactions": [
+        {
+            "response": {
+                "headers": {
+                    "date": [
+                        "Thu, 21 May 2015 20:07:51 GMT"
+                    ], 
+                    "content-type": [
+                        "text/html;charset=utf-8"
+                    ], 
+                    "x-frame-options": [
+                        "SAMEORIGIN"
+                    ], 
+                    "connection": [
+                        "Keep-Alive"
+                    ], 
+                    "content-length": [
+                        "127"
+                    ], 
+                    "x-content-type-options": [
+                        "nosniff"
+                    ], 
+                    "x-xss-protection": [
+                        "1; mode=block"
+                    ], 
+                    "server": [
+                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
+                    ]
+                }, 
+                "body": {
+                    "string": "{\"id\":2,\"login\":\"sudo\",\"email\":\"desenvolvimentobrmed@innvent.com.br\",\"first_name\":\"\",\"last_name\":\"\",\"applications\":[\"default\"]}"
+                }, 
+                "status": {
+                    "message": "OK", 
+                    "code": 200
+                }
+            }, 
+            "request": {
+                "uri": "http://devsso:9292/user_by_login?login=sudo", 
+                "body": null, 
+                "headers": {
+                    "Authorization": [
+                        "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
+                    ], 
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ], 
+                    "User-Agent": [
+                        "Innvent SSO Python Client"
+                    ], 
+                    "Accept": [
+                        "*/*"
+                    ], 
+                    "Connection": [
+                        "keep-alive"
+                    ]
+                }, 
+                "method": "GET"
+            }
+        }
+    ]
+}

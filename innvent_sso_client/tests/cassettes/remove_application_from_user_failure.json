@@ -1,0 +1,67 @@
+{
+    "version": 1, 
+    "interactions": [
+        {
+            "response": {
+                "status": {
+                    "message": "Bad Request", 
+                    "code": 400
+                }, 
+                "body": {
+                    "string": "{\"error\":\"Application provided is not a slug. It must match the /^[a-z0-9\\\\-_]+$/\"}"
+                }, 
+                "headers": {
+                    "date": [
+                        "Thu, 21 May 2015 20:06:40 GMT"
+                    ], 
+                    "content-type": [
+                        "text/html;charset=utf-8"
+                    ], 
+                    "x-frame-options": [
+                        "SAMEORIGIN"
+                    ], 
+                    "connection": [
+                        "Keep-Alive"
+                    ], 
+                    "server": [
+                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
+                    ], 
+                    "x-content-type-options": [
+                        "nosniff"
+                    ], 
+                    "content-length": [
+                        "83"
+                    ], 
+                    "x-xss-protection": [
+                        "1; mode=block"
+                    ]
+                }
+            }, 
+            "request": {
+                "method": "DELETE", 
+                "uri": "http://devsso:9292/users/sudo/applications/Must%20be%20slug/", 
+                "body": null, 
+                "headers": {
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ], 
+                    "Accept": [
+                        "*/*"
+                    ], 
+                    "Connection": [
+                        "keep-alive"
+                    ], 
+                    "Content-Length": [
+                        "0"
+                    ], 
+                    "User-Agent": [
+                        "Innvent SSO Python Client"
+                    ], 
+                    "Authorization": [
+                        "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
+                    ]
+                }
+            }
+        }
+    ]
+}

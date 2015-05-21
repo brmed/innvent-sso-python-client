@@ -32,6 +32,9 @@ class SSOAPIClient(object):
         resp = self._session.request(method, url, data=data, params=params, **kwargs)
         resp.raise_for_status()
 
+        if resp.status_code == 204:
+            return None
+
         return resp.json()
 
     def _get(self, path, data=None, **kwargs):
@@ -39,6 +42,9 @@ class SSOAPIClient(object):
 
     def _post(self, path, data=None, **kwargs):
         return self._request('post', path, data, **kwargs)
+
+    def _delete(self, path, **kwargs):
+        return self._request('delete', path, **kwargs)
 
     def retrieve_new_token(self):
         session_id = getattr(settings, 'SSO_SESSION_ID', '1234')
@@ -88,6 +94,25 @@ class SSOAPIClient(object):
             'total_pages': resp['total_pages'],
             'count': resp['total_count'],
         }
+
+    def add_application_to_user(self, username, application):
+        data = {'application': application}
+        try:
+            self._post('/users/{0}/applications/'.format(username), data=data)
+        except HTTPError:
+            return False
+
+        return True
+
+    def remove_application_from_user(self, username, application):
+        try:
+            self._delete(
+                '/users/{0}/applications/{1}/'.format(username, application)
+            )
+        except HTTPError:
+            return False
+
+        return True
 
 
 class UserCompat(object):

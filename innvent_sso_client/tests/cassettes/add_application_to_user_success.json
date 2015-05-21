@@ -1,0 +1,70 @@
+{
+    "version": 1, 
+    "interactions": [
+        {
+            "response": {
+                "status": {
+                    "message": "Created", 
+                    "code": 201
+                }, 
+                "body": {
+                    "string": "{\"updated_user_id\":1}"
+                }, 
+                "headers": {
+                    "date": [
+                        "Thu, 21 May 2015 20:06:40 GMT"
+                    ], 
+                    "content-type": [
+                        "text/html;charset=utf-8"
+                    ], 
+                    "x-frame-options": [
+                        "SAMEORIGIN"
+                    ], 
+                    "connection": [
+                        "Keep-Alive"
+                    ], 
+                    "server": [
+                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
+                    ], 
+                    "x-content-type-options": [
+                        "nosniff"
+                    ], 
+                    "content-length": [
+                        "21"
+                    ], 
+                    "x-xss-protection": [
+                        "1; mode=block"
+                    ]
+                }
+            }, 
+            "request": {
+                "method": "POST", 
+                "uri": "http://devsso:9292/users/sudo/applications/", 
+                "body": "application=test-app", 
+                "headers": {
+                    "Accept-Encoding": [
+                        "gzip, deflate"
+                    ], 
+                    "Content-Type": [
+                        "application/x-www-form-urlencoded"
+                    ], 
+                    "Accept": [
+                        "*/*"
+                    ], 
+                    "Connection": [
+                        "keep-alive"
+                    ], 
+                    "Content-Length": [
+                        "20"
+                    ], 
+                    "User-Agent": [
+                        "Innvent SSO Python Client"
+                    ], 
+                    "Authorization": [
+                        "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
+                    ]
+                }
+            }
+        }
+    ]
+}
