@@ -31,6 +31,7 @@ DEBUG = True
 SSO_HOST = 'http://devsso:9292'
 SSO_SERVICE_TOKEN = 'sso_dev'
 SSO_SECRET_KEY = '8370e1fd0486968d3adf9cd9e48f25fb0873dec6'
+SSO_APPLICATION_SLUG = 'test-app'
 
 import django
 if django.get_version().startswith('1.5'):

@@ -3,6 +3,7 @@ import base64
 import json
 from dateutil.parser import parse
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ImproperlyConfigured
 
@@ -34,6 +35,9 @@ class SSOMiddleware(object):
             return
 
         if token != session_token:
+            return
+
+        if not self.check_application_permission(user_data):
             return
 
         user = authenticate(
@@ -87,4 +91,10 @@ class SSOMiddleware(object):
             if user.ssousertoken.has_expired:
                 logout(request)
                 return True
+
+    def check_application_permission(self, user_data):
+        applications = user_data['applications']
+        curr_application = settings.SSO_APPLICATION_SLUG
+
+        return curr_application in applications or 'default' in applications
 
