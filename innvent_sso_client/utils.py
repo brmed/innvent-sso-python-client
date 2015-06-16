@@ -43,6 +43,9 @@ class SSOAPIClient(object):
     def _post(self, path, data=None, **kwargs):
         return self._request('post', path, data, **kwargs)
 
+    def _put(self, path, data=None, **kwargs):
+        return self._request('put', path, data, **kwargs)
+
     def _delete(self, path, **kwargs):
         return self._request('delete', path, **kwargs)
 
@@ -63,12 +66,7 @@ class SSOAPIClient(object):
         return UserCompat.from_sso(resp)
 
     def update_user(self, username, **user_kwargs):
-        user_data = self.get_user(username)
-
-        user_data.update(user_kwargs)
-        user_data = UserCompat.to_sso(user_data)
-
-        resp = self._post('/users/{0}'.format(user_data['id']), user_data)
+        resp = self._put('/users/{0}/'.format(username), user_kwargs)
         return resp['updated_user_id'] != '0'
 
     def create_or_update_user(self, *args, **kwargs):
