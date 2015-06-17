@@ -3,127 +3,68 @@
         {
             "response": {
                 "body": {
-                    "string": "{\"id\":907,\"login\":\"user\",\"email\":\"user@example.com\",\"first_name\":\"Test\",\"last_name\":\"User\"}"
-                }, 
-                "headers": {
-                    "content-type": [
-                        "text/html;charset=utf-8"
-                    ], 
-                    "date": [
-                        "Thu, 12 Mar 2015 00:54:57 GMT"
-                    ], 
-                    "x-xss-protection": [
-                        "1; mode=block"
-                    ], 
-                    "connection": [
-                        "Keep-Alive"
-                    ], 
-                    "content-length": [
-                        "91"
-                    ], 
-                    "server": [
-                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
-                    ], 
-                    "x-frame-options": [
-                        "SAMEORIGIN"
-                    ], 
-                    "x-content-type-options": [
-                        "nosniff"
-                    ]
-                }, 
-                "status": {
-                    "message": "OK", 
-                    "code": 200
-                }
-            }, 
-            "request": {
-                "body": null, 
-                "headers": {
-                    "User-Agent": [
-                        "Innvent SSO Python Client"
-                    ], 
-                    "Authorization": [
-                        "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
-                    ], 
-                    "Accept": [
-                        "*/*"
-                    ], 
-                    "Connection": [
-                        "keep-alive"
-                    ], 
-                    "Accept-Encoding": [
-                        "gzip, deflate"
-                    ]
-                }, 
-                "method": "GET", 
-                "uri": "http://devsso:9292/user_by_login?login=user"
-            }
-        }, 
-        {
-            "response": {
-                "body": {
                     "string": "{\"updated_user_id\":1}"
-                }, 
+                },
                 "headers": {
                     "content-type": [
                         "text/html;charset=utf-8"
-                    ], 
+                    ],
                     "date": [
                         "Thu, 12 Mar 2015 00:54:57 GMT"
-                    ], 
+                    ],
                     "x-xss-protection": [
                         "1; mode=block"
-                    ], 
+                    ],
                     "connection": [
                         "Keep-Alive"
-                    ], 
+                    ],
                     "content-length": [
                         "21"
-                    ], 
+                    ],
                     "server": [
                         "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
-                    ], 
+                    ],
                     "x-frame-options": [
                         "SAMEORIGIN"
-                    ], 
+                    ],
                     "x-content-type-options": [
                         "nosniff"
                     ]
-                }, 
+                },
                 "status": {
-                    "message": "OK", 
+                    "message": "OK",
                     "code": 200
                 }
-            }, 
+            },
             "request": {
-                "body": "email=user%40example.com&firstname=User&id=907&login=user&lastname=Test", 
+                "body": "email=user%40example.com&firstname=User&id=907&login=user&lastname=Test",
                 "headers": {
                     "Content-Type": [
                         "application/x-www-form-urlencoded"
-                    ], 
+                    ],
                     "Authorization": [
                         "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
-                    ], 
+                    ],
                     "Accept": [
                         "*/*"
-                    ], 
+                    ],
                     "Accept-Encoding": [
                         "gzip, deflate"
-                    ], 
+                    ],
                     "Connection": [
                         "keep-alive"
-                    ], 
+                    ],
                     "Content-Length": [
                         "71"
-                    ], 
+                    ],
                     "User-Agent": [
                         "Innvent SSO Python Client"
                     ]
-                }, 
-                "method": "POST", 
-                "uri": "http://devsso:9292/users/907"
+                },
+                "method": "POST",
+                "uri": "http://devsso:9292/users/user/"
             }
         }
-    ], 
+    ],
     "version": 1
 }

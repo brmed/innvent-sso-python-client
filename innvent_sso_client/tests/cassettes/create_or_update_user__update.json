@@ -4,191 +4,132 @@
             "response": {
                 "body": {
                     "string": "{\"error\":\"This username is already being used!\"}"
-                }, 
+                },
                 "headers": {
                     "x-content-type-options": [
                         "nosniff"
-                    ], 
+                    ],
                     "content-length": [
                         "48"
-                    ], 
+                    ],
                     "connection": [
                         "Keep-Alive"
-                    ], 
+                    ],
                     "date": [
                         "Thu, 12 Mar 2015 00:58:01 GMT"
-                    ], 
+                    ],
                     "content-type": [
                         "text/html;charset=utf-8"
-                    ], 
+                    ],
                     "x-xss-protection": [
                         "1; mode=block"
-                    ], 
+                    ],
                     "x-frame-options": [
                         "SAMEORIGIN"
-                    ], 
+                    ],
                     "server": [
                         "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
                     ]
-                }, 
+                },
                 "status": {
-                    "message": "Internal Server Error", 
+                    "message": "Internal Server Error",
                     "code": 500
                 }
-            }, 
+            },
             "request": {
-                "method": "POST", 
-                "uri": "http://devsso:9292/users", 
-                "body": "firstname=Test&lastname=User&password=passwd&email=user%40example.com&login=user", 
+                "method": "POST",
+                "uri": "http://devsso:9292/users",
+                "body": "firstname=Test&lastname=User&password=passwd&email=user%40example.com&login=user",
                 "headers": {
                     "Authorization": [
                         "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
-                    ], 
+                    ],
                     "Content-Length": [
                         "80"
-                    ], 
+                    ],
                     "Connection": [
                         "keep-alive"
-                    ], 
+                    ],
                     "Accept-Encoding": [
                         "gzip, deflate"
-                    ], 
+                    ],
                     "Content-Type": [
                         "application/x-www-form-urlencoded"
-                    ], 
+                    ],
                     "User-Agent": [
                         "Innvent SSO Python Client"
-                    ], 
+                    ],
                     "Accept": [
                         "*/*"
                     ]
                 }
             }
-        }, 
-        {
-            "response": {
-                "body": {
-                    "string": "{\"id\":907,\"login\":\"user\",\"email\":\"user@example.com\",\"first_name\":\"User\",\"last_name\":\"Test\"}"
-                }, 
-                "headers": {
-                    "x-content-type-options": [
-                        "nosniff"
-                    ], 
-                    "content-length": [
-                        "91"
-                    ], 
-                    "connection": [
-                        "Keep-Alive"
-                    ], 
-                    "date": [
-                        "Thu, 12 Mar 2015 00:58:01 GMT"
-                    ], 
-                    "content-type": [
-                        "text/html;charset=utf-8"
-                    ], 
-                    "x-xss-protection": [
-                        "1; mode=block"
-                    ], 
-                    "x-frame-options": [
-                        "SAMEORIGIN"
-                    ], 
-                    "server": [
-                        "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
-                    ]
-                }, 
-                "status": {
-                    "message": "OK", 
-                    "code": 200
-                }
-            }, 
-            "request": {
-                "method": "GET", 
-                "uri": "http://devsso:9292/user_by_login?login=user", 
-                "body": null, 
-                "headers": {
-                    "Authorization": [
-                        "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
-                    ], 
-                    "Accept": [
-                        "*/*"
-                    ], 
-                    "Accept-Encoding": [
-                        "gzip, deflate"
-                    ], 
-                    "Connection": [
-                        "keep-alive"
-                    ], 
-                    "User-Agent": [
-                        "Innvent SSO Python Client"
-                    ]
-                }
-            }
-        }, 
+        },
         {
             "response": {
                 "body": {
                     "string": "{\"updated_user_id\":1}"
-                }, 
+                },
                 "headers": {
                     "x-content-type-options": [
                         "nosniff"
-                    ], 
+                    ],
                     "content-length": [
                         "21"
-                    ], 
+                    ],
                     "connection": [
                         "Keep-Alive"
-                    ], 
+                    ],
                     "date": [
                         "Thu, 12 Mar 2015 00:58:01 GMT"
-                    ], 
+                    ],
                     "content-type": [
                         "text/html;charset=utf-8"
-                    ], 
+                    ],
                     "x-xss-protection": [
                         "1; mode=block"
-                    ], 
+                    ],
                     "x-frame-options": [
                         "SAMEORIGIN"
-                    ], 
+                    ],
                     "server": [
                         "WEBrick/1.3.1 (Ruby/2.1.5/2014-11-13)"
                     ]
-                }, 
+                },
                 "status": {
-                    "message": "OK", 
+                    "message": "OK",
                     "code": 200
                 }
-            }, 
+            },
             "request": {
-                "method": "POST", 
-                "uri": "http://devsso:9292/users/907", 
-                "body": "firstname=Test&lastname=User&password=passwd&email=user%40example.com&id=907&login=user", 
+                "method": "POST",
+                "uri": "http://devsso:9292/users/user/",
+                "body": "firstname=Test&lastname=User&password=passwd&email=user%40example.com&id=907&login=user",
                 "headers": {
                     "Authorization": [
                         "Basic c3NvX2Rldjo4MzcwZTFmZDA0ODY5NjhkM2FkZjljZDllNDhmMjVmYjA4NzNkZWM2"
-                    ], 
+                    ],
                     "Content-Length": [
                         "87"
-                    ], 
+                    ],
                     "Connection": [
                         "keep-alive"
-                    ], 
+                    ],
                     "Accept-Encoding": [
                         "gzip, deflate"
-                    ], 
+                    ],
                     "Content-Type": [
                         "application/x-www-form-urlencoded"
-                    ], 
+                    ],
                     "User-Agent": [
                         "Innvent SSO Python Client"
-                    ], 
+                    ],
                     "Accept": [
                         "*/*"
                     ]
                 }
             }
         }
-    ], 
+    ],
     "version": 1
 }
