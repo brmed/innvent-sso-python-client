@@ -179,6 +179,13 @@ class SSOAPIClientTestCase(TestCase):
         self.assertIn('applications', user)
         self.assertNotIn('test-app', user['applications'])
 
+    def test_list_users_should_return_the_correct_dict(self):
+        with vcr.use_cassette('list_applications.json'):
+            resp = SSOAPIClient().list_applications()
+
+        self.assertIsInstance(resp, list)
+        self.assertIn('default', resp)
+
 
 class RemoveDataFromUrlTestCase(TestCase):
 

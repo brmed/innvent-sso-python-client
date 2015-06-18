@@ -112,6 +112,9 @@ class SSOAPIClient(object):
 
         return True
 
+    def list_applications(self):
+        return self._get('/applications/')
+
 
 class UserCompat(object):
 
