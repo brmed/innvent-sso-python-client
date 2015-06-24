@@ -25,3 +25,11 @@ INSTALLED_APPS += ('innvent_sso_client',)
 AUTHENTICATION_BACKENDS += ('innvent_sso_client.backends.SSOBackend',)
 MIDDLEWARE_CLASSES += ('innvent_sso_client.middlewares.SSOMiddleware',)
 ```
+
+E adicione ao urls.py:
+
+```python
+        url(r'forbidden/'$, 'innvent_sso_client.views.forbidden', 'forbidden_application')
+```
+
+Caso queira uma view customizada para usuários que não têm acesso ao sistema, só garanta que exista a rota 'forbidden_application'.
