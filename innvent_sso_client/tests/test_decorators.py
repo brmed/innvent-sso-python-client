@@ -3,16 +3,27 @@ from mock import patch, Mock
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.urlresolvers import reverse
-from django.http import QueryDict
+from django.http import HttpResponse, QueryDict
+from django.test import RequestFactory
 
 from .testtools import TestCase, vcr
+from ..decorators import sso_required
 from ..utils import sso_hostname, SSOAPIClient
+
+
+@sso_required
+def view(request):
+    return HttpResponse('OK')
 
 
 class SSORequiredTestCase(TestCase):
 
     def setUp(self):
-        self.url = reverse('sso_required')
+        self.url = '/test/'
+        self.request = RequestFactory().get(self.url)
+        self.request.user = AnonymousUser()
+
+        self._build_session(self.request)
 
     def test_should_redirect_to_login_path_of_settings_sso_host(self):
         with vcr.use_cassette('access_token_valid.json'):
@@ -27,26 +38,26 @@ class SSORequiredTestCase(TestCase):
         )
 
         with vcr.use_cassette('access_token_valid.json'):
-            response = self.client.get(self.url)
+            response = view(self.request)
 
         self.assertEqual(302, response.status_code)
         self.assertEqual(expected_url, response['Location'])
 
     @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
     def test_should_not_redirect_for_logged_user(self):
-        response = self.client.get(self.url)
+        response = view(self.request)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual('OK', response.content)
 
     def test_should_save_token_at_session(self):
         with vcr.use_cassette('access_token_valid.json'):
-            response = self.client.get(self.url)
+            response = view(self.request)
 
         with vcr.use_cassette('access_token_valid.json'):
             token_dict = SSOAPIClient().retrieve_new_token()
 
-        session = self.client.session
+        session = self.request.session
 
         self.assertIn('SSO_TOKEN', session)
         self.assertEqual(session['SSO_TOKEN'], token_dict['token'])
