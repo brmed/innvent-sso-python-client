@@ -1,6 +1,8 @@
 # coding: utf-8
 from functools import wraps
 
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.http import QueryDict, HttpResponseRedirect, HttpResponseForbidden
 
 from .utils import sso_hostname, SSOAPIClient, remove_data_from_url
@@ -11,7 +13,11 @@ def sso_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if request.user.is_authenticated():
-            return view_func(request, *args, **kwargs)
+            if request.session.get('SSO_APPLICATION_PERMISSION', False):
+                return view_func(request, *args, **kwargs)
+            else:
+                forbidden_url = reverse('forbidden_application')
+                return HttpResponseRedirect(forbidden_url)
 
         token_dict = SSOAPIClient().retrieve_new_token()
 

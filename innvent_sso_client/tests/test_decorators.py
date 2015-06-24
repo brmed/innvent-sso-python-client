@@ -24,6 +24,7 @@ class SSORequiredTestCase(TestCase):
         self.request.user = AnonymousUser()
 
         self._build_session(self.request)
+        self.request.session['SSO_APPLICATION_PERMISSION'] = True
 
     def test_should_redirect_to_login_path_of_settings_sso_host(self):
         with vcr.use_cassette('access_token_valid.json'):
@@ -64,3 +65,15 @@ class SSORequiredTestCase(TestCase):
 
         self.assertIn('SSO_TOKEN_EXPIRATION', session)
         self.assertEqual(session['SSO_TOKEN_EXPIRATION'], token_dict['expires_at'].isoformat())
+
+    @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
+    def test_should_redirect_user_to_forbidden_page_if_sso_application_permission_is_false(self):
+        self.request.session['SSO_APPLICATION_PERMISSION'] = False
+
+        response = view(self.request)
+
+        self.assertEqual(302, response.status_code)
+
+        expected_url = reverse('forbidden_application')
+        self.assertEqual(expected_url, response['Location'])
+
