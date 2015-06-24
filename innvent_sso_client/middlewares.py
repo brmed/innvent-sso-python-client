@@ -37,8 +37,7 @@ class SSOMiddleware(object):
         if token != session_token:
             return
 
-        if not self.check_application_permission(user_data):
-            return
+        self.store_application_permission(request, user_data)
 
         user = authenticate(
             token=token,
@@ -92,9 +91,11 @@ class SSOMiddleware(object):
                 logout(request)
                 return True
 
-    def check_application_permission(self, user_data):
+    def store_application_permission(self, request, user_data):
         applications = user_data['applications']
         curr_application = settings.SSO_APPLICATION_SLUG
 
-        return curr_application in applications or 'default' in applications
+        permission = curr_application in applications or 'default' in applications
+
+        request.session['SSO_APPLICATION_PERMISSION'] = permission
 

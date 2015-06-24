@@ -180,7 +180,7 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.assertUserAuthenticated(request, request.user)
 
-    def test_logs_user_in_if_applications_has_default_application(self):
+    def test_store_sso_application_permission_as_true_if_default_is_present(self):
         request = self.factory.get(self.__get_url(self.data))
         self._build_session(request)
         self.__add_sso_token_info(request)
@@ -188,10 +188,10 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.middleware.process_request(request)
 
-        user = get_user_model().objects.all()[0]
-        self.assertUserAuthenticated(request, user)
+        self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
+        self.assertTrue(request.session['SSO_APPLICATION_PERMISSION'])
 
-    def test_logs_user_in_if_applications_has_current_application(self):
+    def test_store_sso_application_permission_as_true_if_current_application_is_present(self):
         self.data['applications'] = [settings.SSO_APPLICATION_SLUG]
         request = self.factory.get(self.__get_url(self.data))
         self._build_session(request)
@@ -200,10 +200,10 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.middleware.process_request(request)
 
-        user = get_user_model().objects.all()[0]
-        self.assertUserAuthenticated(request, user)
+        self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
+        self.assertTrue(request.session['SSO_APPLICATION_PERMISSION'])
 
-    def test_does_not_log_user_if_applications_has_no_current_application_or_default(self):
+    def test_store_sso_application_permission_as_false_if_neither_current_or_default_are_present(self):
         self.data['user']['applications'] = []
         request = self.factory.get(self.__get_url(self.data))
         self._build_session(request)
@@ -212,4 +212,6 @@ class SSOMiddlewareTestCase(TestCase):
 
         self.middleware.process_request(request)
 
-        self.assertUserNotAuthenticated(request)
+        self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
+        self.assertFalse(request.session['SSO_APPLICATION_PERMISSION'])
+
