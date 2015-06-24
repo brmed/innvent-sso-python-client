@@ -13,7 +13,7 @@ def sso_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if request.user.is_authenticated():
-            if request.session.get('SSO_APPLICATION_PERMISSION', False):
+            if request.session.get('SSO_APPLICATION_PERMISSION', True):
                 return view_func(request, *args, **kwargs)
             else:
                 forbidden_url = reverse('forbidden_application')
