@@ -3,7 +3,10 @@ import os
 from datetime import datetime, timedelta
 from mock import Mock, patch
 
+from django.conf import settings
 from django.http import QueryDict
+from django.test import TestCase as BaseTestCase
+from django.utils.importlib import import_module
 
 from vcr import VCR
 
@@ -35,6 +38,7 @@ class TestLoginRequiredMixin(object):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], redirect_url)
 
+
 class TestAjaxLoginRequiredMixin(object):
 
     def test_login_required(self):
@@ -42,3 +46,12 @@ class TestAjaxLoginRequiredMixin(object):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 403)
+
+
+class TestCase(BaseTestCase):
+
+    def _build_session(self, request):
+        engine = import_module(settings.SESSION_ENGINE)
+        request.session = engine.SessionStore()
+        request.session.save()
+
