@@ -4,9 +4,8 @@ from mock import patch, Mock
 from django.contrib.auth.models import AnonymousUser
 from django.core.urlresolvers import reverse
 from django.http import QueryDict
-from django.test import TestCase
 
-from .testtools import vcr
+from .testtools import TestCase, vcr
 from ..utils import sso_hostname, SSOAPIClient
 
 
