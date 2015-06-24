@@ -10,7 +10,6 @@ from .utils import sso_hostname
 def login(request):
     return HttpResponseRedirect('/')
 
-@sso_required
 def sso_logout(request):
     qs = QueryDict(None, mutable=True)
     qs['callback_url'] = request.build_absolute_uri(settings.SSO_LOGOUT_CALLBACK_PATH)
