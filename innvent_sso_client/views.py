@@ -19,5 +19,5 @@ def sso_logout(request):
     return HttpResponseRedirect(logout_url)
 
 def forbidden(request):
-    message = u'Esse usuário não tem permissão de acesso à essa aplicação.'
+    message = u'Esse usuário não tem permissão de acesso a essa aplicação.'
     return HttpResponseForbidden(message)
