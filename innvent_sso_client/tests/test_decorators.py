@@ -77,3 +77,12 @@ class SSORequiredTestCase(TestCase):
         expected_url = reverse('forbidden_application')
         self.assertEqual(expected_url, response['Location'])
 
+    @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
+    def test_should_not_redirect_user_to_forbidden_if_sso_check_application_permission_is_false(self):
+        self.request.session['SSO_APPLICATION_PERMISSION'] = False
+
+        with self.settings(SSO_CHECK_APPLICATION_PERMISSION=False):
+            response = view(self.request)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('OK', response.content)
