@@ -38,8 +38,9 @@ class SSORequiredTestCase(TestCase):
             sso_hostname('/authorize'), qs.urlencode(safe='/')
         )
 
-        with vcr.use_cassette('access_token_valid.json'):
-            response = view(self.request)
+        with self.settings(SSO_CALLBACK_URL=None):
+            with vcr.use_cassette('access_token_valid.json'):
+                response = view(self.request)
 
         self.assertEqual(302, response.status_code)
         self.assertEqual(expected_url, response['Location'])
