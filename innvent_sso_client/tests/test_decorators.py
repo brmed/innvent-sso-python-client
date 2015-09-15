@@ -38,8 +38,29 @@ class SSORequiredTestCase(TestCase):
             sso_hostname('/authorize'), qs.urlencode(safe='/')
         )
 
+        with self.settings(SSO_CALLBACK_URL=None):
+            with vcr.use_cassette('access_token_valid.json'):
+                response = view(self.request)
+
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(expected_url, response['Location'])
+
+    def test_should_redirect_to_login_path_of_settings_sso_host_with_callback_on_settings(self):
         with vcr.use_cassette('access_token_valid.json'):
-            response = view(self.request)
+            token = SSOAPIClient().retrieve_new_token()['token']
+
+        qs = QueryDict(None, mutable=True)
+        callback_path = '/callback_url/'
+        qs['callback_url'] = callback_path
+        qs['token'] = token
+
+        expected_url = '{0}?{1}'.format(
+            sso_hostname('/authorize'), qs.urlencode(safe='/')
+        )
+
+        with self.settings(SSO_CALLBACK_URL=callback_path):
+            with vcr.use_cassette('access_token_valid.json'):
+                response = view(self.request)
 
         self.assertEqual(302, response.status_code)
         self.assertEqual(expected_url, response['Location'])

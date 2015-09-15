@@ -24,7 +24,8 @@ def sso_required(view_func):
 
         token_dict = SSOAPIClient().retrieve_new_token()
 
-        callback_url = remove_data_from_url(request.build_absolute_uri())
+        settings_callback = getattr(settings, 'SSO_CALLBACK_URL', '')
+        callback_url = remove_data_from_url(settings_callback or request.build_absolute_uri())
 
         qs = QueryDict(None, mutable=True)
         qs['callback_url'] = callback_url

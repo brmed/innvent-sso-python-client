@@ -27,8 +27,10 @@ class TestLoginRequiredMixin(object):
         'token': 'this_is_a_token',
     }))
     def test_login_required(self):
-        self.client.logout()
-        response = self.client.get(self.url)
+
+        with self.settings(SSO_CALLBACK_URL=None):
+            self.client.logout()
+            response = self.client.get(self.url)
 
         qs = QueryDict(None, mutable=True)
         qs['token'] = 'this_is_a_token'
