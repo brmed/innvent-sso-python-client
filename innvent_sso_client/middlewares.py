@@ -8,6 +8,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ImproperlyConfigured
 
 
+class SSORequestFromSettingsMiddleware(object):
+
+    def process_request(self, request):
+        request.SSO_APPLICATION_SLUG = settings.SSO_APPLICATION_SLUG
+
+
 class SSOMiddleware(object):
 
     def process_request(self, request):
@@ -98,4 +104,3 @@ class SSOMiddleware(object):
         permission = curr_application in applications or 'default' in applications
 
         request.session['SSO_APPLICATION_PERMISSION'] = permission
-

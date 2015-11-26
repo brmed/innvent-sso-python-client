@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timedelta
 from model_mommy import mommy
 
+from django.conf import settings
 from django.contrib.auth import SESSION_KEY, get_user_model, login, logout, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
@@ -11,7 +12,7 @@ from django.test import RequestFactory
 from django.utils.importlib import import_module
 
 from .testtools import TestCase
-from ..middlewares import SSOMiddleware
+from ..middlewares import SSOMiddleware, SSORequestFromSettingsMiddleware
 
 
 class SSOMiddlewareTestCase(TestCase):
@@ -216,3 +217,19 @@ class SSOMiddlewareTestCase(TestCase):
         self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
         self.assertFalse(request.session['SSO_APPLICATION_PERMISSION'])
 
+
+class SSORequestFromSettingsMiddlewareTests(TestCase):
+
+    def setUp(self):
+        self.url = 'http://testserver/foo/bar/'
+        self.factory = RequestFactory()
+        self.middleware = SSORequestFromSettingsMiddleware()
+
+    def test_populates_request_with_settings_sso_application_slug(self):
+        self.assertTrue(settings.SSO_APPLICATION_SLUG)
+        request = self.factory.get(self.url)
+        self.assertIsNone(getattr(request, 'SSO_APPLICATION_SLUG', None))
+
+        self.middleware.process_request(request)
+
+        self.assertEqual(settings.SSO_APPLICATION_SLUG, request.SSO_APPLICATION_SLUG)
