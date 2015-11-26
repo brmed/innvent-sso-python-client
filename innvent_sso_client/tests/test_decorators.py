@@ -38,7 +38,7 @@ class SSORequiredTestCase(TestCase):
             sso_hostname('/authorize'), qs.urlencode(safe='/')
         )
 
-        with self.settings(SSO_CALLBACK_URL=None):
+        with self.settings(SSO_CALLBACK_PATH=None):
             with vcr.use_cassette('access_token_valid.json'):
                 response = view(self.request)
 
@@ -51,14 +51,14 @@ class SSORequiredTestCase(TestCase):
 
         qs = QueryDict(None, mutable=True)
         callback_path = '/callback_url/'
-        qs['callback_url'] = callback_path
+        qs['callback_url'] = 'http://testserver{0}'.format(callback_path)
         qs['token'] = token
 
         expected_url = '{0}?{1}'.format(
             sso_hostname('/authorize'), qs.urlencode(safe='/')
         )
 
-        with self.settings(SSO_CALLBACK_URL=callback_path):
+        with self.settings(SSO_CALLBACK_PATH=callback_path):
             with vcr.use_cassette('access_token_valid.json'):
                 response = view(self.request)
 
