@@ -4,7 +4,6 @@ import json
 from datetime import datetime, timedelta
 from model_mommy import mommy
 
-from django.conf import settings
 from django.contrib.auth import SESSION_KEY, get_user_model, login, logout, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
@@ -16,6 +15,7 @@ from ..middlewares import SSOMiddleware
 
 
 class SSOMiddlewareTestCase(TestCase):
+    app_slug = 'app_slug'
 
     def setUp(self):
         self.data = {
@@ -52,6 +52,7 @@ class SSOMiddlewareTestCase(TestCase):
 
         request.session['SSO_TOKEN'] = token
         request.session['SSO_TOKEN_EXPIRATION'] = expiration.isoformat()
+        request.SSO_APPLICATION_SLUG = self.app_slug
 
     def __create_user_and_log_it_in(self, request, token_expiration=None):
         if not token_expiration:
@@ -192,7 +193,7 @@ class SSOMiddlewareTestCase(TestCase):
         self.assertTrue(request.session['SSO_APPLICATION_PERMISSION'])
 
     def test_store_sso_application_permission_as_true_if_current_application_is_present(self):
-        self.data['applications'] = [settings.SSO_APPLICATION_SLUG]
+        self.data['user']['applications'] = [self.app_slug]
         request = self.factory.get(self.__get_url(self.data))
         self._build_session(request)
         self.__add_sso_token_info(request)

@@ -93,7 +93,7 @@ class SSOMiddleware(object):
 
     def store_application_permission(self, request, user_data):
         applications = user_data['applications']
-        curr_application = settings.SSO_APPLICATION_SLUG
+        curr_application = request.SSO_APPLICATION_SLUG
 
         permission = curr_application in applications or 'default' in applications
 
