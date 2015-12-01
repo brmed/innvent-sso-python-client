@@ -12,10 +12,11 @@ from django.test import RequestFactory
 from django.utils.importlib import import_module
 
 from .testtools import TestCase
-from ..middlewares import SSOMiddleware
+from ..middlewares import SSOMiddleware, SSORequestFromSettingsMiddleware
 
 
 class SSOMiddlewareTestCase(TestCase):
+    app_slug = 'app_slug'
 
     def setUp(self):
         self.data = {
@@ -52,6 +53,7 @@ class SSOMiddlewareTestCase(TestCase):
 
         request.session['SSO_TOKEN'] = token
         request.session['SSO_TOKEN_EXPIRATION'] = expiration.isoformat()
+        request.SSO_APPLICATION_SLUG = self.app_slug
 
     def __create_user_and_log_it_in(self, request, token_expiration=None):
         if not token_expiration:
@@ -192,7 +194,7 @@ class SSOMiddlewareTestCase(TestCase):
         self.assertTrue(request.session['SSO_APPLICATION_PERMISSION'])
 
     def test_store_sso_application_permission_as_true_if_current_application_is_present(self):
-        self.data['applications'] = [settings.SSO_APPLICATION_SLUG]
+        self.data['user']['applications'] = [self.app_slug]
         request = self.factory.get(self.__get_url(self.data))
         self._build_session(request)
         self.__add_sso_token_info(request)
@@ -215,3 +217,19 @@ class SSOMiddlewareTestCase(TestCase):
         self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
         self.assertFalse(request.session['SSO_APPLICATION_PERMISSION'])
 
+
+class SSORequestFromSettingsMiddlewareTests(TestCase):
+
+    def setUp(self):
+        self.url = 'http://testserver/foo/bar/'
+        self.factory = RequestFactory()
+        self.middleware = SSORequestFromSettingsMiddleware()
+
+    def test_populates_request_with_settings_sso_application_slug(self):
+        self.assertTrue(settings.SSO_APPLICATION_SLUG)
+        request = self.factory.get(self.url)
+        self.assertIsNone(getattr(request, 'SSO_APPLICATION_SLUG', None))
+
+        self.middleware.process_request(request)
+
+        self.assertEqual(settings.SSO_APPLICATION_SLUG, request.SSO_APPLICATION_SLUG)
