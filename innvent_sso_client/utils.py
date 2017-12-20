@@ -1,5 +1,5 @@
 # coding: utf-8
-import urlparse
+from urllib.parse import urlparse, urlsplit, urlunsplit
 from datetime import datetime
 from dateutil.parser import parse
 from requests import Session
@@ -12,7 +12,8 @@ from django.http import QueryDict
 
 def sso_hostname(path):
     if not hasattr(settings, 'SSO_HOST'):
-        raise ImproperlyConfigured('You need to set the SSO_HOST in the settings.')
+        raise ImproperlyConfigured(
+            'You need to set the SSO_HOST in the settings.')
 
     return '{0}{1}'.format(settings.SSO_HOST, path)
 
@@ -29,7 +30,8 @@ class SSOAPIClient(object):
     def _request(self, method, path, data=None, params=None, **kwargs):
         url = sso_hostname(path)
 
-        resp = self._session.request(method, url, data=data, params=params, **kwargs)
+        resp = self._session.request(
+            method, url, data=data, params=params, **kwargs)
         resp.raise_for_status()
 
         if resp.status_code == 204:
@@ -134,10 +136,10 @@ class UserCompat(object):
 
 
 def remove_data_from_url(url):
-    scheme, netloc, path, query, fragment = urlparse.urlsplit(url)
+    scheme, netloc, path, query, fragment = urlsplit(url)
 
     qs = QueryDict(query, mutable=True)
     qs.pop('data', None)
     query = qs.urlencode(safe='/')
 
-    return urlparse.urlunsplit([scheme, netloc, path, query, fragment])
+    return urlunsplit([scheme, netloc, path, query, fragment])

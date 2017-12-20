@@ -2,7 +2,7 @@
 from functools import wraps
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import QueryDict, HttpResponseRedirect, HttpResponseForbidden
 
 from .utils import sso_hostname, SSOAPIClient, remove_data_from_url
@@ -12,19 +12,21 @@ def sso_required(view_func):
 
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        if request.user.is_authenticated():
-            check_application_permission = getattr(settings, 'SSO_CHECK_APPLICATION_PERMISSION', True)
-            application_permission = request.session.get('SSO_APPLICATION_PERMISSION', True)
+        if request.user.is_authenticated:
+            check_application_permission = getattr(
+                settings, 'SSO_CHECK_APPLICATION_PERMISSION', True)
+            application_permission = request.session.get(
+                'SSO_APPLICATION_PERMISSION', True)
             if not check_application_permission or application_permission:
                 return view_func(request, *args, **kwargs)
             else:
                 forbidden_url = reverse('forbidden_application')
                 return HttpResponseRedirect(forbidden_url)
 
-
         token_dict = SSOAPIClient().retrieve_new_token()
 
-        callback = request.build_absolute_uri(getattr(settings, 'SSO_CALLBACK_PATH', None))
+        callback = request.build_absolute_uri(
+            getattr(settings, 'SSO_CALLBACK_PATH', None))
         callback_url = remove_data_from_url(callback)
 
         qs = QueryDict(None, mutable=True)

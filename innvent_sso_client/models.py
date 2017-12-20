@@ -9,6 +9,7 @@ from django.utils import timezone
 class DuplicatedTokenException(Exception):
     pass
 
+
 class SSOUserTokenManager(models.Manager):
 
     def create_or_update(self, user, token, expiration_datetime):
@@ -36,7 +37,8 @@ class SSOUserToken(models.Model):
     objects = SSOUserTokenManager()
 
     token = models.CharField(max_length=32, unique=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     expiration_datetime = models.DateTimeField()
     last_modified = models.DateTimeField(auto_now=True)
 

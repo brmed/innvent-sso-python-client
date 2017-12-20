@@ -15,19 +15,21 @@ if django.get_version().startswith('1.5'):
             # Adding model 'SSOUserToken'
             db.create_table(u'innvent_sso_client_ssousertoken', (
                 (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-                ('token', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
-                ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-                ('expiration_datetime', self.gf('django.db.models.fields.DateTimeField')()),
-                ('last_modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+                ('token', self.gf('django.db.models.fields.CharField')(
+                    unique=True, max_length=32)),
+                ('user', self.gf('django.db.models.fields.related.OneToOneField')(
+                    to=orm['auth.User'], unique=True, on_delete=models.PROTECT)),
+                ('expiration_datetime', self.gf(
+                    'django.db.models.fields.DateTimeField')()),
+                ('last_modified', self.gf('django.db.models.fields.DateTimeField')(
+                    auto_now=True, blank=True)),
             ))
             db.send_create_signal(u'innvent_sso_client', ['SSOUserToken'])
-
 
         def backwards(self, orm):
 
             # Deleting model 'SSOUserToken'
             db.delete_table(u'innvent_sso_client_ssousertoken')
-
 
         models = {
             u'auth.group': {
@@ -83,7 +85,6 @@ else:
     from django.db import models, migrations
     from django.conf import settings
 
-
     class Migration(migrations.Migration):
 
         dependencies = [
@@ -94,11 +95,13 @@ else:
             migrations.CreateModel(
                 name=u'SSOUserToken',
                 fields=[
-                    (u'id', models.AutoField(verbose_name=u'ID', serialize=False, auto_created=True, primary_key=True)),
+                    (u'id', models.AutoField(verbose_name=u'ID',
+                                             serialize=False, auto_created=True, primary_key=True)),
                     (u'token', models.CharField(unique=True, max_length=32)),
                     (u'expiration_datetime', models.DateTimeField()),
                     (u'last_modified', models.DateTimeField(auto_now=True)),
-                    (u'user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                    (u'user', models.OneToOneField(
+                        to=settings.AUTH_USER_MODEL, on_delete=models.PROTECT)),
                 ],
                 options={
                 },
