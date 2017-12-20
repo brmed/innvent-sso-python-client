@@ -16,8 +16,11 @@ class SSORequestFromSettingsMiddleware(object):
 
 class SSOMiddleware(object):
 
-    def process_request(self, request):
+    def __init__(self, get_reponse):
+        self.get_response = get_reponse
 
+    def __call__(self, request):
+        request.SSO_APPLICATION_SLUG = settings.SSO_APPLICATION_SLUG
         if not hasattr(request, 'user'):
             raise ImproperlyConfigured(
                 "The SSOAuthenticationMiddleware required the authentication"
@@ -28,20 +31,20 @@ class SSOMiddleware(object):
             )
 
         if self.logout_expired_token_user(request):
-            return
+            return self.get_response(request)
 
         try:
             session_token, token_expiration = self.get_session_data(request)
         except TypeError:
-            return
+            return self.get_response(request)
 
         try:
             token, user_data = self.extract_user_data(request)
         except TypeError:
-            return
+            return self.get_response(request)
 
         if token != session_token:
-            return
+            return self.get_response(request)
 
         self.store_application_permission(request, user_data)
 
@@ -55,13 +58,14 @@ class SSOMiddleware(object):
         )
 
         if not user:
-            return
+            return self.get_response(request)
 
         if self.logout_expired_token_user(request, user):
-            return
+            return self.get_response(request)
 
         request.user = user
         login(request, user)
+        return self.get_response(request)
 
     def extract_user_data(self, request):
         b64_data = request.GET.get('data')
@@ -89,7 +93,7 @@ class SSOMiddleware(object):
     def logout_expired_token_user(self, request, user=None):
         user = user or request.user
 
-        if user.is_authenticated():
+        if user.is_authenticated:
             if not hasattr(user, 'ssousertoken'):
                 return True
 
