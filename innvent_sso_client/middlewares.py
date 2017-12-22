@@ -72,10 +72,13 @@ class SSOMiddleware(object):
         if not b64_data:
             # não existe data na querystring
             return None
-
+        
         json_data = base64.b64decode(b64_data)
-        data = json.loads(json_data)
-
+        try:
+            data = json.loads(json_data)
+        except TypeError:
+            data = json.loads(json_data.decode('utf-8'))
+            
         return data['token'], data['user']
 
     def get_session_data(self, request):
