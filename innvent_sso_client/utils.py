@@ -115,6 +115,14 @@ class SSOAPIClient(object):
     def list_applications(self):
         return self._get('/applications/')
 
+    def check_user_identity(self, username, password):
+        url = sso_hostname('/form_authentication')
+        from requests import post
+        resp = post('{}?username={}&password={}'.format(url, username, password))
+
+        if not resp._content:
+            return True
+        return False
 
 class UserCompat(object):
 
