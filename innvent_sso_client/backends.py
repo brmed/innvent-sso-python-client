@@ -7,7 +7,11 @@ from .models import SSOUserToken, DuplicatedTokenException
 
 class SSOBackend(ModelBackend):
 
-    def authenticate(self, token=None, expiration_datetime=None, username=None, **kwargs):
+    def authenticate(self, request=None, **kwargs):
+        token = kwargs.get('token')
+        expiration_datetime = kwargs.get('expiration_datetime')
+        username = kwargs.get('username')
+
         if not all((token, expiration_datetime, username)):
             return None
 
