@@ -1,6 +1,8 @@
 # coding: utf-8
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm, PasswordChangeForm
 
+from django.forms import ValidationError
+
 from .utils import SSOAPIClient
 
 
@@ -53,10 +55,15 @@ class SSOPasswordChangeForm(PasswordChangeForm):
     def clean_old_password(self):
         old_password = self.cleaned_data["old_password"]
         if not SSOAPIClient().check_user_identity(self.user.username, old_password):
-            from django.forms import ValidationError
             raise ValidationError(
                 self.error_messages['password_incorrect'])
         return old_password
+
+    def clean(self):
+        new_password = self.cleaned_data.get('new_password2')
+        old_password = self.cleaned_data.get('old_password')
+        if new_password and old_password and new_password == old_password:
+            raise ValidationError("Você não pode utilizar uma senha que já utilizou antes.")
 
     def save(self, *args, **kwargs):
         SSOAPIClient().update_user(
