@@ -60,12 +60,18 @@ class SSOPasswordChangeForm(PasswordChangeForm):
         return old_password
 
     def clean(self):
+        cleaned_data = super(SSOPasswordChangeForm, self).clean()
+        self.__validate_password()
+        return cleaned_data
+
+    def __validate_password(self):
         new_password = self.cleaned_data.get('new_password2')
         old_password = self.cleaned_data.get('old_password')
         if new_password and old_password and new_password == old_password:
             raise ValidationError("Você não pode utilizar uma senha que já utilizou antes.")
 
-    def save(self, *args, **kwargs):
+
+    def save(self, commit=True):
         SSOAPIClient().update_user(
             username=self.user.username,
             password=self.cleaned_data['new_password1'],
@@ -74,4 +80,4 @@ class SSOPasswordChangeForm(PasswordChangeForm):
             email=self.user.email,
         )
 
-        return super(SSOPasswordChangeForm, self).save(*args, **kwargs)
+        return super(SSOPasswordChangeForm, self).save(commit)
