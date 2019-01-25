@@ -38,7 +38,10 @@ class SSOUserChangeForm(UserChangeForm):
 
 
 class SSOSetPasswordForm(SetPasswordForm):
-
+    """
+    Let the user change his/her password without entering the
+    old password.
+    """
     def save(self, commit=True):
         SSOAPIClient().update_user(
             username=self.user.username,
@@ -52,6 +55,10 @@ class SSOSetPasswordForm(SetPasswordForm):
 
 
 class SSOPasswordChangeForm(PasswordChangeForm):
+    """
+    Let the user change his/her password "only" by entering his/her
+    old password.
+    """
     def clean_old_password(self):
         old_password = self.cleaned_data["old_password"]
         if not SSOAPIClient().check_user_identity(self.user.username, old_password):
@@ -81,3 +88,31 @@ class SSOPasswordChangeForm(PasswordChangeForm):
         )
 
         return super(SSOPasswordChangeForm, self).save(commit)
+
+
+class SSORecoverPasswordForm(SetPasswordForm):
+    """
+    Let the user change his/her password without entering the
+    old password, but the new password must be different from
+    the old one.
+    """
+    def clean(self):
+        cleaned_data = super(SSORecoverPasswordForm, self).clean()
+        self.__validate_password()
+        return cleaned_data
+
+    def __validate_password(self):
+        new_password = self.cleaned_data.get('new_password2')
+        if SSOAPIClient().check_user_identity(self.user.username, new_password):
+            raise ValidationError("Você não pode utilizar uma senha que já utilizou antes.")
+
+    def save(self, commit=True):
+        SSOAPIClient().update_user(
+            username=self.user.username,
+            password=self.cleaned_data['new_password1'],
+            first_name=self.user.first_name,
+            last_name=self.user.last_name,
+            email=self.user.email,
+        )
+
+        return super(SSORecoverPasswordForm, self).save(commit)
