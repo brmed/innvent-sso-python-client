@@ -69,6 +69,10 @@ class SSOAPIClient(object):
         resp = self._post('/users/{0}/'.format(username), user_kwargs)
         return resp['updated_user_id'] != '0'
 
+    def update_user_by_id(self, sso_user_id, **user_kwargs):
+        resp = self._put('/users/{0}'.format(sso_user_id), user_kwargs)
+        return resp['updated_user_id'] != '0'
+
     def create_or_update_user(self, *args, **kwargs):
         try:
             self.create_user(*args, **kwargs)
