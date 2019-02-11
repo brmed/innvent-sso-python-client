@@ -26,14 +26,15 @@ class SSOUserChangeForm(UserChangeForm):
 
     def save(self, commit=True):
         user = super(SSOUserChangeForm, self).save(commit)
-
-        SSOAPIClient().update_user(
+        sso_client = SSOAPIClient()
+        user_sso = sso_client.get_user(user.username)
+        sso_client.update_user(
+            sso_user['id'],
             username=user.username,
-            first_name=user.first_name,
-            last_name=user.last_name,
+            firstname=user.first_name,
+            lastname=user.last_name,
             email=user.email,
         )
-
         return user
 
 
@@ -43,11 +44,14 @@ class SSOSetPasswordForm(SetPasswordForm):
     old password.
     """
     def save(self, commit=True):
-        SSOAPIClient().update_user(
+        sso_client = SSOAPIClient()
+        user_sso = sso_client.get_user(self.user.username)
+        user_sso.update_user(
+            sso_user['id'],
             username=self.user.username,
             password=self.cleaned_data['new_password1'],
-            first_name=self.user.first_name,
-            last_name=self.user.last_name,
+            firstname=self.user.first_name,
+            lastname=self.user.last_name,
             email=self.user.email,
         )
 
@@ -79,11 +83,14 @@ class SSOPasswordChangeForm(PasswordChangeForm):
 
 
     def save(self, commit=True):
-        SSOAPIClient().update_user(
+        sso_client = SSOAPIClient()
+        user_sso = sso_client.get_user(self.user.username)
+        user_sso.update_user(
+            user_sso['id'],
             username=self.user.username,
             password=self.cleaned_data['new_password1'],
-            first_name=self.user.first_name,
-            last_name=self.user.last_name,
+            firstname=self.user.first_name,
+            lastname=self.user.last_name,
             email=self.user.email,
         )
 
@@ -107,11 +114,14 @@ class SSORecoverPasswordForm(SetPasswordForm):
             raise ValidationError("Você não pode utilizar uma senha que já utilizou antes.")
 
     def save(self, commit=True):
-        SSOAPIClient().update_user(
+        sso_client = SSOAPIClient()
+        user_sso = sso_client.get_user(self.user.username)
+        user_sso.update_user(
+            user_sso['id'],
             username=self.user.username,
             password=self.cleaned_data['new_password1'],
-            first_name=self.user.first_name,
-            last_name=self.user.last_name,
+            firstname=self.user.first_name,
+            lastname=self.user.last_name,
             email=self.user.email,
         )
 
