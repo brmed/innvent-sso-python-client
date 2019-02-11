@@ -27,10 +27,10 @@ class SSOUserChangeForm(UserChangeForm):
     def save(self, commit=True):
         user = super(SSOUserChangeForm, self).save(commit)
         sso_client = SSOAPIClient()
-        user_sso = sso_client.get_user(user.username)
-        sso_client.update_user(
+        sso_user = sso_client.get_user(user.username)
+        sso_client.update_user_by_id(
             sso_user['id'],
-            username=user.username,
+            login=user.username,
             firstname=user.first_name,
             lastname=user.last_name,
             email=user.email,
@@ -45,10 +45,10 @@ class SSOSetPasswordForm(SetPasswordForm):
     """
     def save(self, commit=True):
         sso_client = SSOAPIClient()
-        user_sso = sso_client.get_user(self.user.username)
-        user_sso.update_user(
+        sso_user = sso_client.get_user(self.user.username)
+        sso_client.update_user_by_id(
             sso_user['id'],
-            username=self.user.username,
+            login=self.user.username,
             password=self.cleaned_data['new_password1'],
             firstname=self.user.first_name,
             lastname=self.user.last_name,
@@ -85,9 +85,9 @@ class SSOPasswordChangeForm(PasswordChangeForm):
     def save(self, commit=True):
         sso_client = SSOAPIClient()
         user_sso = sso_client.get_user(self.user.username)
-        user_sso.update_user(
+        sso_client.update_user_by_id(
             user_sso['id'],
-            username=self.user.username,
+            login=self.user.username,
             password=self.cleaned_data['new_password1'],
             firstname=self.user.first_name,
             lastname=self.user.last_name,
@@ -116,9 +116,9 @@ class SSORecoverPasswordForm(SetPasswordForm):
     def save(self, commit=True):
         sso_client = SSOAPIClient()
         user_sso = sso_client.get_user(self.user.username)
-        user_sso.update_user(
+        sso_client.update_user_by_id(
             user_sso['id'],
-            username=self.user.username,
+            login=self.user.username,
             password=self.cleaned_data['new_password1'],
             firstname=self.user.first_name,
             lastname=self.user.last_name,
