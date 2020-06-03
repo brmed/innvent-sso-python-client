@@ -29,14 +29,14 @@ class Tox(TestCommand):
 
 setup(
     name='innvent-sso-python-client',
-    version='0.1.5',
+    version='1.5.1',
     description='Python Client for Innvent SSO',
     author='Innvent',
     author_email='desenvolvimentobrmed@innvent.com.br',
     url='https://github.com/innvent/innvent-sso-python-client',
     packages=find_packages(),
     test_suite='innvent_sso_client.tests',
-    install_requires=['Django>=1.5.3', 'requests>=2.4.1', 'python-dateutil==2.6.1'],
+    install_requires=['Django>=1.5.3', 'requests>=2.4.1', 'python-dateutil>=2.6.1'],
     tests_require=['tox>=1.6.1', 'virtualenv>=1.11.2'],
     cmdclass = {'test': Tox},
 )
