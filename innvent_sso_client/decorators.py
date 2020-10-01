@@ -19,6 +19,8 @@ def sso_required(view_func):
                 'SSO_APPLICATION_PERMISSION', True)
             if not check_application_permission or application_permission:
                 return view_func(request, *args, **kwargs)
+            elif settings.SSO_APPLICATION_SLUG in SSOAPIClient().get_user(request.user.username).get('applications', []):
+                return view_func(request, *args, **kwargs)
             else:
                 forbidden_url = reverse('forbidden_application')
                 return HttpResponseRedirect(forbidden_url)
