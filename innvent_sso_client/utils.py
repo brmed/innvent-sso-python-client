@@ -95,6 +95,9 @@ class SSOAPIClient(object):
             'count': resp['total_count'],
         }
 
+    def get_users_by_last_login(self, date):
+        return self._get('/users/last_login/{}'.format(date))
+
     def add_application_to_user(self, username, application):
         data = {'application': application}
         try:
