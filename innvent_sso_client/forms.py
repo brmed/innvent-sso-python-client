@@ -34,6 +34,7 @@ class SSOUserChangeForm(UserChangeForm):
             firstname=user.first_name,
             lastname=user.last_name,
             email=user.email,
+            is_active=user.is_active
         )
         return user
 
