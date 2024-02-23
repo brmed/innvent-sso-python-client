@@ -15,6 +15,7 @@ def sso_required(view_func):
         if request.user.is_authenticated():
             check_application_permission = getattr(settings, 'SSO_CHECK_APPLICATION_PERMISSION', True)
             application_permission = request.session.get('SSO_APPLICATION_PERMISSION', True)
+
             if not check_application_permission or application_permission:
                 return view_func(request, *args, **kwargs)
             else:

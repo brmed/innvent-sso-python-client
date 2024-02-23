@@ -37,7 +37,7 @@ class TestLoginRequiredMixin(object):
         qs = QueryDict(None, mutable=True)
         qs['token'] = 'this_is_a_token'
         qs['callback_url'] = 'http://testserver{0}'.format(callback_url)
-        qs['redirect_url'] = response.request['PATH_INFO']
+        qs['redirect_url'] = response.request['PATH_INFO'] if response.request['PATH_INFO'] != '/' else ''
         qs['source_redirect'] = 'brnet'
 
         redirect_url = sso_hostname('/authorize?{0}'.format(qs.urlencode(safe='/')))
