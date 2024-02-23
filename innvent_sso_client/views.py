@@ -5,6 +5,8 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect, QueryDict
 from .decorators import sso_required
 from .utils import sso_hostname
 
+import re
+
 
 @sso_required
 def login(request):
@@ -12,7 +14,7 @@ def login(request):
 
 def sso_logout(request):
     qs = QueryDict(None, mutable=True)
-    qs['callback_url'] = request.build_absolute_uri(settings.SSO_LOGOUT_CALLBACK_PATH)
+    qs['callback_url'] = '{}?redirect_url={}'.format(request.build_absolute_uri(settings.SSO_LOGOUT_CALLBACK_PATH), re.sub(r'^https?://[^/]+/', '/', request.META.get('HTTP_REFERER', '/')))
 
     logout_url = '{0}?{1}'.format(sso_hostname('/logout'), qs.urlencode(safe='/'))
 

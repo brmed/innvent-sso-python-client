@@ -21,14 +21,23 @@ def sso_required(view_func):
                 forbidden_url = reverse('forbidden_application')
                 return HttpResponseRedirect(forbidden_url)
 
-
         token_dict = SSOAPIClient().retrieve_new_token()
 
         callback = request.build_absolute_uri(getattr(settings, 'SSO_CALLBACK_PATH', None))
         callback_url = remove_data_from_url(callback)
 
+        redirect_path = request.GET.get('RedirectPath', None)
+        source_redirect = 'brnet'
+
+        if redirect_path:
+            source_redirect = 'knowledge_base'
+        else:
+            redirect_path = request.path if request.path != '/' else ''
+
         qs = QueryDict(None, mutable=True)
         qs['callback_url'] = callback_url
+        qs['source_redirect'] = source_redirect
+        qs['redirect_url'] = redirect_path
         qs['token'] = token_dict['token']
 
         redirect_url = '{0}?{1}'.format(

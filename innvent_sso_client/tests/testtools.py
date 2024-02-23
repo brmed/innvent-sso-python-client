@@ -37,6 +37,9 @@ class TestLoginRequiredMixin(object):
         qs = QueryDict(None, mutable=True)
         qs['token'] = 'this_is_a_token'
         qs['callback_url'] = 'http://testserver{0}'.format(callback_url)
+        qs['redirect_url'] = response.request['PATH_INFO']
+        qs['source_redirect'] = 'brnet'
+
         redirect_url = sso_hostname('/authorize?{0}'.format(qs.urlencode(safe='/')))
 
         self.assertEqual(response.status_code, 302)
@@ -58,4 +61,3 @@ class TestCase(BaseTestCase):
         engine = import_module(settings.SESSION_ENGINE)
         request.session = engine.SessionStore()
         request.session.save()
-
