@@ -15,11 +15,11 @@ def sso_required(view_func):
         redirect_path = request.GET.get('RedirectPath', None)
         source_redirect = 'brnet'
 
-        if request.user.is_authenticated() or not redirect_path:
+        if request.user.is_authenticated():
             check_application_permission = getattr(settings, 'SSO_CHECK_APPLICATION_PERMISSION', True)
             application_permission = request.session.get('SSO_APPLICATION_PERMISSION', True)
 
-            if not check_application_permission or application_permission:
+            if not check_application_permission or application_permission or redirect_path:
                 return view_func(request, *args, **kwargs)
             else:
                 forbidden_url = reverse('forbidden_application')
