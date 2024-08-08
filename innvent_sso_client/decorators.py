@@ -12,14 +12,12 @@ def sso_required(view_func):
 
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        redirect_path = request.GET.get('RedirectPath', None)
-        source_redirect = 'brnet'
 
         if request.user.is_authenticated():
             check_application_permission = getattr(settings, 'SSO_CHECK_APPLICATION_PERMISSION', True)
             application_permission = request.session.get('SSO_APPLICATION_PERMISSION', True)
 
-            if not check_application_permission or application_permission or redirect_path:
+            if not check_application_permission or application_permission or request.GET.get('source_redirect') == 'knowledge_base':
                 return view_func(request, *args, **kwargs)
             else:
                 forbidden_url = reverse('forbidden_application')
@@ -29,6 +27,8 @@ def sso_required(view_func):
 
         callback = request.build_absolute_uri(getattr(settings, 'SSO_CALLBACK_PATH', None))
         callback_url = remove_data_from_url(callback)
+        redirect_path = request.GET.get('RedirectPath', None)
+        source_redirect = 'brnet'
 
         if redirect_path:
             source_redirect = 'knowledge_base'
