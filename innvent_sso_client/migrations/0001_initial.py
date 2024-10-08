@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import django
-if django.get_version().startswith('1.5'):
+if django.get_version().startswith('1.5') or django.get_version().startswith('1.6'):
     # Migração para o django 1.5 usando south
 
     import datetime
