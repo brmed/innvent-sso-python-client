@@ -2,6 +2,9 @@
 import base64
 import json
 from datetime import datetime, timedelta
+import urllib
+
+from django.http import HttpResponse
 from model_mommy import mommy
 
 from django.conf import settings
@@ -9,7 +12,8 @@ from django.contrib.auth import SESSION_KEY, get_user_model, login, logout, auth
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.test import RequestFactory
-from django.utils.importlib import import_module
+from importlib import import_module
+from mock import Mock
 
 from .testtools import TestCase
 from ..middlewares import SSOMiddleware, SSORequestFromSettingsMiddleware
@@ -42,6 +46,16 @@ class SSOMiddlewareTestCase(TestCase):
 
             url = '{0}?data={1}'.format(url, b64_data)
 
+        return url
+    
+    # def __get_url_standard(self, data=None):
+    #     url = 'http://testserver/foo/bar/'
+        
+    #     if data:
+    #         # Correctly formats {'a': 1} into "a=1"
+    #         query_string = urllib.parse.urlencode(data)
+    #         url = '{0}?{1}'.format(url, query_string)
+            
         return url
 
     def __add_sso_token_info(self, request, expiration=None, token=None):

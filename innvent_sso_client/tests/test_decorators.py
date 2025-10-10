@@ -9,7 +9,8 @@ from django.test import RequestFactory
 from .testtools import TestCase, vcr
 from ..decorators import sso_required
 from ..utils import sso_hostname, SSOAPIClient
-
+from importlib import import_module
+from django.conf import settings
 
 @sso_required
 def view(request):
@@ -23,6 +24,7 @@ class SSORequiredTestCase(TestCase):
         self.request = RequestFactory().get(self.url)
         self.request.user = AnonymousUser()
 
+
         self._build_session(self.request)
         self.request.session['SSO_APPLICATION_PERMISSION'] = True
 
@@ -32,6 +34,8 @@ class SSORequiredTestCase(TestCase):
 
         qs = QueryDict(None, mutable=True)
         qs['callback_url'] = 'http://testserver{0}'.format(self.url)
+        qs['source_redirect'] = 'brnet'
+        qs['redirect_url'] = '/test/'
         qs['token'] = token
 
         expected_url = '{0}?{1}'.format(
@@ -52,6 +56,8 @@ class SSORequiredTestCase(TestCase):
         qs = QueryDict(None, mutable=True)
         callback_path = '/callback_url/'
         qs['callback_url'] = 'http://testserver{0}'.format(callback_path)
+        qs['source_redirect'] = 'brnet'
+        qs['redirect_url'] = '/test/'
         qs['token'] = token
 
         expected_url = '{0}?{1}'.format(
@@ -70,7 +76,7 @@ class SSORequiredTestCase(TestCase):
         response = view(self.request)
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual('OK', response.content)
+        self.assertEqual(b'OK', response.content)
 
     def test_should_save_token_at_session(self):
         with vcr.use_cassette('access_token_valid.json'):
@@ -106,4 +112,40 @@ class SSORequiredTestCase(TestCase):
             response = view(self.request)
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual('OK', response.content)
+        self.assertEqual(b'OK', response.content)
+
+
+    def test_should_redirect_to_login_path_with_interface_cookies(self):
+        display_custom_logo = True
+        logo_key = 'group_key'
+        
+        self.request = RequestFactory().get(self.url)
+        self.request.user = AnonymousUser()
+        engine = import_module(settings.SESSION_ENGINE)
+        session = engine.SessionStore()
+        self.request.session = session
+        self.request.COOKIES = {
+            'display_custom_logo': display_custom_logo,
+            'logo_key': logo_key
+        }
+
+        with vcr.use_cassette('access_token_valid.json'):
+            token = SSOAPIClient().retrieve_new_token()['token']
+
+        qs = QueryDict(None, mutable=True)
+        qs['callback_url'] = 'http://testserver{0}'.format(self.url)
+        qs['source_redirect'] = 'brnet'
+        qs['redirect_url'] = '/test/'
+        qs['token'] = token
+        qs['interface'] = logo_key
+
+        expected_url = '{0}?{1}'.format(
+            sso_hostname('/authorize'), qs.urlencode(safe='/')
+        )
+
+        with self.settings(SSO_CALLBACK_PATH=None):
+            with vcr.use_cassette('access_token_valid.json'):
+                response = view(self.request)
+
+        self.assertEqual(expected_url, response['Location'])
+        self.assertEqual(302, response.status_code)
