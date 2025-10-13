@@ -35,6 +35,9 @@ def sso_required(view_func):
         qs['callback_url'] = callback_url
         qs['token'] = token_dict['token']
 
+        if request.COOKIES.get('display_custom_logo'):
+            qs['interface'] = request.COOKIES.get('logo_key')
+
         redirect_url = '{0}?{1}'.format(
             sso_hostname('/authorize'), qs.urlencode(safe='/')
         )
