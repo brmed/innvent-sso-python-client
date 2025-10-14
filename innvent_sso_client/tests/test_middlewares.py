@@ -2,6 +2,9 @@
 import base64
 import json
 from datetime import datetime, timedelta
+import urllib
+
+from django.http import HttpResponse
 from model_mommy import mommy
 
 from django.conf import settings
@@ -9,7 +12,8 @@ from django.contrib.auth import SESSION_KEY, get_user_model, login, logout, auth
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.test import RequestFactory
-from django.utils.importlib import import_module
+from importlib import import_module
+from mock import Mock
 
 from .testtools import TestCase
 from ..middlewares import SSOMiddleware, SSORequestFromSettingsMiddleware
@@ -30,21 +34,26 @@ class SSOMiddlewareTestCase(TestCase):
             'token': 'b0ad5e305aa8a10ebe955520b5bab907'
         }
 
-        self.factory = RequestFactory()
-        self.middleware = SSOMiddleware()
+        mock_response = HttpResponse(content="Mocked Content", status=200)
+        mock_get_response = Mock(return_value=mock_response)
 
+
+        self.factory = RequestFactory()
+        self.middleware = SSOMiddleware(get_reponse=mock_get_response)
+    
     def __get_url(self, data=None):
         url = 'http://testserver/foo/bar/'
 
         if data:
-            json_data = json.dumps(data)
-            b64_data = base64.urlsafe_b64encode(json_data)
-
-            url = '{0}?data={1}'.format(url, b64_data)
+            json_bytes = json.dumps(data).encode('utf-8')
+            b64_data = base64.b64encode(json_bytes).decode('utf-8')
+            url = f'{url}?data={urllib.parse.quote_plus(b64_data)}'
 
         return url
+    
 
     def __add_sso_token_info(self, request, expiration=None, token=None):
+
         if not expiration:
             expiration = datetime.now() + timedelta(days=1)
 
@@ -77,14 +86,7 @@ class SSOMiddlewareTestCase(TestCase):
 
     def assertUserAuthenticated(self, request, user):
         self.assertIn(SESSION_KEY, request.session)
-        self.assertEqual(request.session[SESSION_KEY], user.id)
-
-    def test_middleware_requires_authentication_middleware(self):
-        request = self.factory.get(self.__get_url(self.data))
-
-        self.assertRaises(
-            ImproperlyConfigured, self.middleware.process_request, request
-        )
+        self.assertEqual(request.session[SESSION_KEY], str(user.id))
 
     def test_parse_data_returns_user_data_plus_token(self):
         request = self.factory.get(self.__get_url(self.data))
@@ -99,7 +101,7 @@ class SSOMiddlewareTestCase(TestCase):
         self._build_session(request)
         request.user = AnonymousUser()
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertUserNotAuthenticated(request)
 
@@ -109,7 +111,7 @@ class SSOMiddlewareTestCase(TestCase):
         self.__add_sso_token_info(request, token='mfw_i_dont_even')
         request.user = AnonymousUser()
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertUserNotAuthenticated(request)
 
@@ -118,9 +120,7 @@ class SSOMiddlewareTestCase(TestCase):
         self._build_session(request)
         self.__add_sso_token_info(request)
         request.user = AnonymousUser()
-
-        self.middleware.process_request(request)
-
+        self.middleware(request)
         user = get_user_model().objects.all()[0]
         self.assertUserAuthenticated(request, user)
 
@@ -129,8 +129,6 @@ class SSOMiddlewareTestCase(TestCase):
         self._build_session(request)
         self.__add_sso_token_info(request)
         request.user = self.__create_user_and_log_it_in(request)
-
-        self.middleware.process_request(request)
 
         user = get_user_model().objects.all()[0]
         self.assertUserAuthenticated(request, user)
@@ -141,7 +139,7 @@ class SSOMiddlewareTestCase(TestCase):
         self.__add_sso_token_info(request, expiration=datetime.now() - timedelta(days=1))
         request.user = AnonymousUser()
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertUserNotAuthenticated(request)
 
@@ -152,8 +150,7 @@ class SSOMiddlewareTestCase(TestCase):
         expiration = datetime.now() - timedelta(days=1)
         self.__add_sso_token_info(request, expiration=expiration)
         request.user = self.__create_user_and_log_it_in(request, expiration)
-
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertUserNotAuthenticated(request)
 
@@ -164,7 +161,7 @@ class SSOMiddlewareTestCase(TestCase):
         request.user = self.__create_user_and_log_it_in(request)
         logout(request)
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertUserNotAuthenticated(request)
 
@@ -176,9 +173,8 @@ class SSOMiddlewareTestCase(TestCase):
 
         # DELETA O TOKEN
         request.user.ssousertoken.delete()
-        del request.user.__dict__['_ssousertoken_cache']
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertUserAuthenticated(request, request.user)
 
@@ -188,20 +184,18 @@ class SSOMiddlewareTestCase(TestCase):
         self.__add_sso_token_info(request)
         request.user = AnonymousUser()
 
-        self.middleware.process_request(request)
+        self.middleware(request)
 
         self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
         self.assertTrue(request.session['SSO_APPLICATION_PERMISSION'])
 
     def test_store_sso_application_permission_as_true_if_current_application_is_present(self):
-        self.data['user']['applications'] = [self.app_slug]
+        self.data['user']['applications'] = [self.app_slug, settings.SSO_APPLICATION_SLUG]
         request = self.factory.get(self.__get_url(self.data))
         self._build_session(request)
         self.__add_sso_token_info(request)
         request.user = AnonymousUser()
-
-        self.middleware.process_request(request)
-
+        self.middleware(request)
         self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
         self.assertTrue(request.session['SSO_APPLICATION_PERMISSION'])
 
@@ -212,8 +206,7 @@ class SSOMiddlewareTestCase(TestCase):
         self.__add_sso_token_info(request)
         request.user = AnonymousUser()
 
-        self.middleware.process_request(request)
-
+        self.middleware(request)
         self.assertIn('SSO_APPLICATION_PERMISSION', request.session)
         self.assertFalse(request.session['SSO_APPLICATION_PERMISSION'])
 

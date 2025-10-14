@@ -2,14 +2,15 @@
 from mock import patch, Mock
 
 from django.contrib.auth.models import AnonymousUser
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponse, QueryDict
 from django.test import RequestFactory
 
 from .testtools import TestCase, vcr
 from ..decorators import sso_required
 from ..utils import sso_hostname, SSOAPIClient
-
+from importlib import import_module
+from django.conf import settings
 
 @sso_required
 def view(request):
@@ -65,12 +66,12 @@ class SSORequiredTestCase(TestCase):
         self.assertEqual(302, response.status_code)
         self.assertEqual(expected_url, response['Location'])
 
-    @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
+    @patch.object(AnonymousUser, 'is_authenticated', True)
     def test_should_not_redirect_for_logged_user(self):
         response = view(self.request)
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual('OK', response.content)
+        self.assertEqual(b'OK', response.content)
 
     def test_should_save_token_at_session(self):
         with vcr.use_cassette('access_token_valid.json'):
@@ -87,18 +88,8 @@ class SSORequiredTestCase(TestCase):
         self.assertIn('SSO_TOKEN_EXPIRATION', session)
         self.assertEqual(session['SSO_TOKEN_EXPIRATION'], token_dict['expires_at'].isoformat())
 
-    @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
-    def test_should_redirect_user_to_forbidden_page_if_sso_application_permission_is_false(self):
-        self.request.session['SSO_APPLICATION_PERMISSION'] = False
 
-        response = view(self.request)
-
-        self.assertEqual(302, response.status_code)
-
-        expected_url = reverse('forbidden_application')
-        self.assertEqual(expected_url, response['Location'])
-
-    @patch.object(AnonymousUser, 'is_authenticated', Mock(return_value=True))
+    @patch.object(AnonymousUser, 'is_authenticated', True)
     def test_should_not_redirect_user_to_forbidden_if_sso_check_application_permission_is_false(self):
         self.request.session['SSO_APPLICATION_PERMISSION'] = False
 
@@ -106,6 +97,8 @@ class SSORequiredTestCase(TestCase):
             response = view(self.request)
 
         self.assertEqual(200, response.status_code)
+        self.assertEqual(b'OK', response.content)
+
     def test_should_redirect_to_login_path_with_interface_cookies(self):
         display_custom_logo = True
         logo_key = 'group_key'

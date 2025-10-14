@@ -55,6 +55,7 @@ class SSOUserChangeFormTestCase(TestCase):
             'first_name': 'name',
             'last_name': 'last_name',
             'email': 'email@email.com',
+            'is_active': True
         }
         mocked_api_call.assert_called_once_with(**call_kwargs)
 

@@ -1,10 +1,8 @@
 # coding: utf-8
-from django.conf.urls import patterns, url
-
+from django.urls import path
 from ..views import forbidden
 
 
-urlpatterns = patterns('',
-    url(r'forbidden/$', forbidden, name='forbidden_application'),
-)
-
+urlpatterns = [
+    path('forbidden/', forbidden, name='forbidden_application'),
+]

@@ -6,7 +6,7 @@ from mock import Mock, patch
 from django.conf import settings
 from django.http import QueryDict
 from django.test import TestCase as BaseTestCase
-from django.utils.importlib import import_module
+from importlib import import_module
 
 from vcr import VCR
 
