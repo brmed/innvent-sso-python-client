@@ -36,8 +36,8 @@ def sso_required(view_func):
         qs['callback_url'] = callback_url
         qs['token'] = token_dict['token']
 
-        if request.COOKIES.get('display_custom_logo'):
-            qs['interface'] = request.COOKIES.get('logo_key')
+        if request.session.get('display_custom_logo'):
+            qs['interface'] = request.session.get('logo_key')
 
         redirect_url = '{0}?{1}'.format(
             sso_hostname('/authorize'), qs.urlencode(safe='/')
@@ -46,13 +46,10 @@ def sso_required(view_func):
         request.session["SSO_TOKEN"] = token_dict['token']
         request.session["SSO_TOKEN_EXPIRATION"] = token_dict['expires_at'].isoformat()
 
-        if 'HTTP_COOKIE' in request.META:
-            cookie = SimpleCookie(request.META.get('HTTP_COOKIE', '') or '')
-            if 'display_custom_logo' in cookie:
-                del cookie['display_custom_logo']
-            if 'logo_key' in cookie:
-                del cookie['logo_key']
-            request.META['HTTP_COOKIE'] = '; '.join(['%s=%s' % (k, v.value) for k, v in cookie.items()])
+        if 'display_custom_logo' in request.session:
+            del request.session['display_custom_logo']
+        if 'logo_key' in request.session:
+            del request.session['logo_key']
 
         return HttpResponseRedirect(redirect_url)
 
