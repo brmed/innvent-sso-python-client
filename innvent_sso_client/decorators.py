@@ -51,6 +51,9 @@ def sso_required(view_func):
         request.session["SSO_TOKEN"] = token_dict['token']
         request.session["SSO_TOKEN_EXPIRATION"] = token_dict['expires_at'].isoformat()
 
+        request.COOKIES.pop('display_custom_logo', None)
+        request.COOKIES.pop('logo_key', None)
+
         return HttpResponseRedirect(redirect_url)
 
     return _wrapped_view
