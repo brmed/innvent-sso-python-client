@@ -1,6 +1,5 @@
 # coding: utf-8
 from functools import wraps
-from Cookie import SimpleCookie
 
 from django.conf import settings
 from django.urls import reverse
