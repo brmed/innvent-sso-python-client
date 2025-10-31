@@ -29,7 +29,7 @@ class Tox(TestCommand):
 
 setup(
     name='innvent-sso-python-client',
-    version='3.1.1',
+    version='3.1.2',
     description='Python Client for Innvent SSO',
     author='Innvent',
     author_email='desenvolvimentobrmed@innvent.com.br',
