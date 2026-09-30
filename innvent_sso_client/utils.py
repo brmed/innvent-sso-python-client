@@ -17,6 +17,26 @@ def sso_hostname(path):
     return '{0}{1}'.format(settings.SSO_HOST, path)
 
 
+class SSOPasswordPolicyError(HTTPError):
+
+    def __init__(self, message, violations, *args, **kwargs):
+        super(SSOPasswordPolicyError, self).__init__(message, *args, **kwargs)
+        self.message = message
+        self.violations = violations
+
+    @property
+    def rules(self):
+        return [violation.get('rule') for violation in self.violations]
+
+    def __unicode__(self):
+        if isinstance(self.message, unicode):
+            return self.message
+        return self.message.decode('utf-8')
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+
 class SSOAPIClient(object):
 
     def __init__(self):
@@ -30,12 +50,29 @@ class SSOAPIClient(object):
         url = sso_hostname(path)
 
         resp = self._session.request(method, url, data=data, params=params, **kwargs)
+        self._raise_for_password_policy(resp)
         resp.raise_for_status()
 
         if resp.status_code == 204:
             return None
 
         return resp.json()
+
+    def _raise_for_password_policy(self, resp):
+        if resp.status_code != 422:
+            return
+
+        try:
+            body = resp.json()
+        except ValueError:
+            return
+
+        if not isinstance(body, dict) or not isinstance(body.get('password_errors'), list):
+            return
+
+        raise SSOPasswordPolicyError(
+            body.get('error') or '', body['password_errors'], response=resp
+        )
 
     def _get(self, path, data=None, **kwargs):
         return self._request('get', path, params=data, **kwargs)
@@ -73,12 +110,19 @@ class SSOAPIClient(object):
         resp = self._put('/users/{0}'.format(sso_user_id), user_kwargs)
         return resp['updated_user_id'] != '0'
 
-    def create_or_update_user(self, *args, **kwargs):
+    def change_own_password(self, login, current_password, new_password):
+        data = {'current_password': current_password, 'password': new_password}
+        resp = self._post('/users/{0}/password/'.format(login), data)
+        return resp['updated_user_id'] != '0'
+
+    def create_or_update_user(self, username, password, **user_kwargs):
         try:
-            self.create_user(*args, **kwargs)
+            self.create_user(username, password, **user_kwargs)
             return True
+        except SSOPasswordPolicyError:
+            raise
         except HTTPError:
-            self.update_user(*args, **kwargs)
+            self.update_user(username, password=password)
 
     def create_invalid_users(self, usernames):
         return self._post('/create-invalid-users/', data={'logins': ','.join(usernames)})
@@ -98,7 +142,8 @@ class SSOAPIClient(object):
         }
 
     def get_users_by_last_login(self, date, less_than=False):
-        return self._get('/users/last_login/{}'.format(date), data={'less_than': less_than})
+        data = {'less_than': less_than} if less_than else None
+        return self._get('/users/last_login/{}'.format(date), data=data)
 
     def add_application_to_user(self, username, application):
         data = {'application': application}

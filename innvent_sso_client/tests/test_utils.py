@@ -1,13 +1,34 @@
 # coding: utf-8
+import json
 from datetime import datetime
 from dateutil.parser import parse
 from mock import patch, Mock
+from requests import Response, Session
+from requests.exceptions import HTTPError
 
 from django.conf import settings
 from django.test import TestCase
 
 from .testtools import vcr
-from ..utils import SSOAPIClient, sso_hostname, remove_data_from_url
+from ..utils import SSOAPIClient, SSOPasswordPolicyError, sso_hostname, remove_data_from_url
+
+
+def make_response(status_code, body=None, content=None):
+    response = Response()
+    response.status_code = status_code
+    response.reason = 'Reason'
+    response.url = sso_hostname('/users')
+    response._content = content if content is not None else json.dumps(body).encode('utf-8')
+    return response
+
+
+PASSWORD_ERRORS_BODY = {
+    'error': u'A senha precisa ter 8 caracteres. A senha já foi usada.',
+    'password_errors': [
+        {'rule': 'composition', 'message': u'A senha precisa ter 8 caracteres.'},
+        {'rule': 'history', 'message': u'A senha já foi usada.'},
+    ],
+}
 
 
 class SSOAPIClientTestCase(TestCase):
@@ -185,6 +206,158 @@ class SSOAPIClientTestCase(TestCase):
 
         self.assertIsInstance(resp, list)
         self.assertIn('default', resp)
+
+
+@patch.object(Session, 'request')
+class SSOAPIClientPasswordPolicyTestCase(TestCase):
+
+    def test_422_with_password_errors_raises_password_policy_error(self, mocked_request):
+        mocked_request.return_value = make_response(422, PASSWORD_ERRORS_BODY)
+
+        with self.assertRaises(SSOPasswordPolicyError) as context:
+            SSOAPIClient()._put('/users/1', {'password': 'x'})
+
+        error = context.exception
+        self.assertEqual(PASSWORD_ERRORS_BODY['error'], error.message)
+        self.assertEqual(PASSWORD_ERRORS_BODY['password_errors'], error.violations)
+        self.assertEqual(['composition', 'history'], error.rules)
+        self.assertEqual(422, error.response.status_code)
+        self.assertEqual(PASSWORD_ERRORS_BODY['error'], unicode(error))
+        self.assertEqual(PASSWORD_ERRORS_BODY['error'].encode('utf-8'), str(error))
+
+    def test_password_policy_error_is_an_http_error(self, mocked_request):
+        mocked_request.return_value = make_response(422, PASSWORD_ERRORS_BODY)
+
+        self.assertRaises(HTTPError, SSOAPIClient()._put, '/users/1', {'password': 'x'})
+
+    def test_422_without_password_errors_raises_http_error(self, mocked_request):
+        mocked_request.return_value = make_response(422, {'error': 'invalid'})
+
+        with self.assertRaises(HTTPError) as context:
+            SSOAPIClient()._put('/users/1', {'login': 'x'})
+
+        self.assertNotIsInstance(context.exception, SSOPasswordPolicyError)
+
+    def test_422_without_json_body_raises_http_error(self, mocked_request):
+        mocked_request.return_value = make_response(422, content=b'<html></html>')
+
+        with self.assertRaises(HTTPError) as context:
+            SSOAPIClient()._put('/users/1', {'login': 'x'})
+
+        self.assertNotIsInstance(context.exception, SSOPasswordPolicyError)
+
+    def test_other_errors_with_password_errors_raise_http_error(self, mocked_request):
+        mocked_request.return_value = make_response(400, PASSWORD_ERRORS_BODY)
+
+        with self.assertRaises(HTTPError) as context:
+            SSOAPIClient()._put('/users/1', {'password': 'x'})
+
+        self.assertNotIsInstance(context.exception, SSOPasswordPolicyError)
+
+    def test_create_or_update_user_does_not_fallback_to_update_on_password_policy_error(self, mocked_request):
+        mocked_request.return_value = make_response(422, PASSWORD_ERRORS_BODY)
+
+        with patch.object(SSOAPIClient, 'update_user') as mocked_update:
+            self.assertRaises(
+                SSOPasswordPolicyError, SSOAPIClient().create_or_update_user,
+                username='user', password='x', first_name='Test', last_name='User', email='u@example.com',
+            )
+
+        self.assertFalse(mocked_update.called)
+
+    def test_create_or_update_user_still_falls_back_to_update_on_other_errors(self, mocked_request):
+        mocked_request.return_value = make_response(409, {'error': 'already exists'})
+
+        with patch.object(SSOAPIClient, 'update_user') as mocked_update:
+            resp = SSOAPIClient().create_or_update_user(
+                username='user', password='x', first_name='Test', last_name='User', email='u@example.com',
+            )
+
+        self.assertIsNone(resp)
+        mocked_update.assert_called_once_with('user', password='x')
+
+    def test_create_or_update_user_sends_only_the_password_when_updating(self, mocked_request):
+        mocked_request.side_effect = [
+            make_response(409, {'error': 'already exists'}),
+            make_response(200, {'updated_user_id': '13'}),
+        ]
+
+        SSOAPIClient().create_or_update_user(
+            username='user', password='x', first_name='Test', last_name='User', email='u@example.com',
+        )
+
+        self.assertEqual(2, mocked_request.call_count)
+        self.assertEqual(
+            (('post', sso_hostname('/users/user/')), {'data': {'password': 'x'}, 'params': None}),
+            mocked_request.call_args_list[1]
+        )
+
+
+@patch.object(Session, 'request')
+class SSOAPIClientChangeOwnPasswordTestCase(TestCase):
+
+    def test_posts_passwords_in_the_body(self, mocked_request):
+        mocked_request.return_value = make_response(200, {'updated_user_id': '13'})
+
+        resp = SSOAPIClient().change_own_password('foo', 'current', 'new')
+
+        self.assertTrue(resp)
+        mocked_request.assert_called_once_with(
+            'post', sso_hostname('/users/foo/password/'),
+            data={'current_password': 'current', 'password': 'new'}, params=None,
+        )
+
+    def test_returns_false_when_nothing_was_updated(self, mocked_request):
+        mocked_request.return_value = make_response(200, {'updated_user_id': '0'})
+
+        self.assertFalse(SSOAPIClient().change_own_password('foo', 'current', 'new'))
+
+    def test_wrong_current_password_raises_password_policy_error(self, mocked_request):
+        mocked_request.return_value = make_response(422, {
+            'error': u'Senha atual inválida.',
+            'password_errors': [{'rule': 'current_password', 'message': u'Senha atual inválida.'}],
+        })
+
+        with self.assertRaises(SSOPasswordPolicyError) as context:
+            SSOAPIClient().change_own_password('foo', 'wrong', 'new')
+
+        self.assertEqual(['current_password'], context.exception.rules)
+
+    def test_inactive_user_raises_password_policy_error(self, mocked_request):
+        mocked_request.return_value = make_response(422, {
+            'error': u'Usuário inativo.',
+            'password_errors': [{'rule': 'inactive', 'message': u'Usuário inativo.'}],
+        })
+
+        with self.assertRaises(SSOPasswordPolicyError) as context:
+            SSOAPIClient().change_own_password('foo', 'current', 'new')
+
+        self.assertEqual(['inactive'], context.exception.rules)
+
+    def test_user_not_found_raises_http_error(self, mocked_request):
+        mocked_request.return_value = make_response(404, {'error': 'user not found'})
+
+        with self.assertRaises(HTTPError) as context:
+            SSOAPIClient().change_own_password('foo', 'current', 'new')
+
+        self.assertNotIsInstance(context.exception, SSOPasswordPolicyError)
+        self.assertEqual(404, context.exception.response.status_code)
+
+
+@patch.object(SSOAPIClient, '_request')
+class SSOAPIClientGetUsersByLastLoginTestCase(TestCase):
+
+    def test_omits_less_than_when_false(self, mocked_request):
+        SSOAPIClient().get_users_by_last_login('2026-01-01')
+
+        mocked_request.assert_called_once_with('get', '/users/last_login/2026-01-01', params=None)
+
+    def test_sends_less_than_when_true(self, mocked_request):
+        SSOAPIClient().get_users_by_last_login('2026-01-01', less_than=True)
+
+        mocked_request.assert_called_once_with(
+            'get', '/users/last_login/2026-01-01', params={'less_than': True}
+        )
 
 
 class RemoveDataFromUrlTestCase(TestCase):

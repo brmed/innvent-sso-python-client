@@ -1,4 +1,5 @@
 #coding: utf-8
+from mock import patch
 from model_mommy import mommy
 
 from django.contrib.auth import get_user_model
@@ -83,3 +84,36 @@ class SSOBackendTestCase(TestCase):
         self.assertEqual(1, SSOUserToken.objects.count())
         self.assertEqual(created_token.token, user.ssousertoken.token)
 
+    def test_updates_email_of_existing_user_when_it_changed_on_sso(self):
+        created_user = mommy.make(self.UserModel, username=self.backend_kwargs['username'], email='old@foo.com')
+
+        user = self.backend.authenticate(**self.backend_kwargs)
+
+        self.assertEqual(self.backend_kwargs['email'], user.email)
+        self.assertEqual(self.backend_kwargs['email'], self.UserModel.objects.get(pk=created_user.pk).email)
+
+    def test_updates_only_the_email_of_existing_user(self):
+        created_user = mommy.make(
+            self.UserModel, username=self.backend_kwargs['username'], email='old@foo.com', first_name='local'
+        )
+
+        with patch.object(self.UserModel, 'save') as mocked_save:
+            self.backend.authenticate(**self.backend_kwargs)
+
+        mocked_save.assert_called_once_with(update_fields=['email'])
+
+    def test_does_not_save_existing_user_when_email_did_not_change(self):
+        mommy.make(self.UserModel, username=self.backend_kwargs['username'], email=self.backend_kwargs['email'])
+
+        with patch.object(self.UserModel, 'save') as mocked_save:
+            self.backend.authenticate(**self.backend_kwargs)
+
+        self.assertFalse(mocked_save.called)
+
+    def test_keeps_local_email_when_sso_sends_no_email(self):
+        created_user = mommy.make(self.UserModel, username=self.backend_kwargs['username'], email='old@foo.com')
+        self.backend_kwargs['email'] = ''
+
+        self.backend.authenticate(**self.backend_kwargs)
+
+        self.assertEqual('old@foo.com', self.UserModel.objects.get(pk=created_user.pk).email)

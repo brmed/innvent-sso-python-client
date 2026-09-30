@@ -23,6 +23,8 @@ class SSOBackend(ModelBackend):
                 last_name=kwargs.get('last_name', ''),
                 **username_kwargs
             )
+        else:
+            self.sync_email(user, kwargs.get('email'))
 
         try:
             SSOUserToken.objects.create_or_update(user, token, expiration_datetime)
@@ -31,3 +33,9 @@ class SSOBackend(ModelBackend):
         except DuplicatedTokenException:
             return None
 
+    def sync_email(self, user, email):
+        if not email or email == user.email:
+            return
+
+        user.email = email
+        user.save(update_fields=['email'])

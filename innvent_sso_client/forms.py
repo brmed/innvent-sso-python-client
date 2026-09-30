@@ -3,23 +3,48 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPassw
 
 from django.forms import ValidationError
 
-from .utils import SSOAPIClient
+from .utils import SSOAPIClient, SSOPasswordPolicyError
 
 
-class SSOUserCreationForm(UserCreationForm):
+class SSOPasswordPolicyErrorsMixin(object):
+    password_error_field = 'new_password1'
+    password_error_fields_by_rule = {}
 
-    def save(self, commit=True):
-        user = super(SSOUserCreationForm, self).save(commit)
+    def add_password_policy_errors(self, error):
+        violations = error.violations or [{'message': error.message}]
 
-        SSOAPIClient().create_or_update_user(
-            username=user.username,
-            password=self.cleaned_data['password1'],
-            first_name=user.first_name,
-            last_name=user.last_name,
-            email=user.email,
-        )
+        for violation in violations:
+            field = self.password_error_fields_by_rule.get(
+                violation.get('rule'), self.password_error_field
+            )
+            self.add_field_error(field, violation.get('message') or error.message)
 
-        return user
+    def add_field_error(self, field, message):
+        self._errors.setdefault(field, self.error_class()).append(message)
+        self.cleaned_data.pop(field, None)
+
+
+class SSOUserCreationForm(SSOPasswordPolicyErrorsMixin, UserCreationForm):
+    password_error_field = 'password1'
+
+    def clean(self):
+        cleaned_data = super(SSOUserCreationForm, self).clean()
+
+        if self._errors:
+            return cleaned_data
+
+        try:
+            SSOAPIClient().create_or_update_user(
+                username=cleaned_data.get('username'),
+                password=cleaned_data.get('password1'),
+                first_name=cleaned_data.get('first_name', ''),
+                last_name=cleaned_data.get('last_name', ''),
+                email=cleaned_data.get('email', ''),
+            )
+        except SSOPasswordPolicyError as error:
+            self.add_password_policy_errors(error)
+
+        return cleaned_data
 
 
 class SSOUserChangeForm(UserChangeForm):
@@ -39,91 +64,77 @@ class SSOUserChangeForm(UserChangeForm):
         return user
 
 
-class SSOSetPasswordForm(SetPasswordForm):
+class SSOUpdatePasswordByIdMixin(SSOPasswordPolicyErrorsMixin):
+
+    def clean(self):
+        cleaned_data = super(SSOUpdatePasswordByIdMixin, self).clean()
+
+        if self._errors:
+            return cleaned_data
+
+        try:
+            self.update_sso_password(cleaned_data['new_password1'])
+        except SSOPasswordPolicyError as error:
+            self.add_password_policy_errors(error)
+
+        return cleaned_data
+
+    def update_sso_password(self, password):
+        sso_client = SSOAPIClient()
+        sso_user = sso_client.get_user(self.user.username)
+        sso_client.update_user_by_id(sso_user['id'], password=password)
+
+
+class SSOSetPasswordForm(SSOUpdatePasswordByIdMixin, SetPasswordForm):
     """
     Let the user change his/her password without entering the
     old password.
     """
-    def save(self, commit=True):
-        sso_client = SSOAPIClient()
-        sso_user = sso_client.get_user(self.user.username)
-        sso_client.update_user_by_id(
-            sso_user['id'],
-            login=self.user.username,
-            password=self.cleaned_data['new_password1'],
-            firstname=self.user.first_name,
-            lastname=self.user.last_name,
-            email=self.user.email,
-        )
-
-        return super(SSOSetPasswordForm, self).save(commit)
 
 
-class SSOPasswordChangeForm(PasswordChangeForm):
+class SSOPasswordChangeForm(SSOPasswordPolicyErrorsMixin, PasswordChangeForm):
     """
     Let the user change his/her password "only" by entering his/her
     old password.
     """
+    password_error_fields_by_rule = {'current_password': 'old_password'}
+
+    def __init__(self, *args, **kwargs):
+        super(SSOPasswordChangeForm, self).__init__(*args, **kwargs)
+        self.fields['old_password'].label = u'Senha atual'
+
     def clean_old_password(self):
-        old_password = self.cleaned_data["old_password"]
-        if not SSOAPIClient().check_user_identity(self.user.username, old_password):
-            raise ValidationError(
-                self.error_messages['password_incorrect'])
-        return old_password
+        return self.cleaned_data['old_password']
 
     def clean(self):
         cleaned_data = super(SSOPasswordChangeForm, self).clean()
-        self.__validate_password()
+
+        if self._errors:
+            return cleaned_data
+
+        try:
+            SSOAPIClient().change_own_password(
+                self.user.username,
+                cleaned_data['old_password'],
+                cleaned_data['new_password2'],
+            )
+        except SSOPasswordPolicyError as error:
+            self.add_password_policy_errors(error)
+
         return cleaned_data
 
-    def __validate_password(self):
-        new_password = self.cleaned_data.get('new_password2')
-        old_password = self.cleaned_data.get('old_password')
-        if new_password and old_password and new_password == old_password:
-            raise ValidationError("Você não pode utilizar uma senha que já utilizou antes.")
 
-
-    def save(self, commit=True):
-        sso_client = SSOAPIClient()
-        user_sso = sso_client.get_user(self.user.username)
-        sso_client.update_user_by_id(
-            user_sso['id'],
-            login=self.user.username,
-            password=self.cleaned_data['new_password1'],
-            firstname=self.user.first_name,
-            lastname=self.user.last_name,
-            email=self.user.email,
-        )
-
-        return super(SSOPasswordChangeForm, self).save(commit)
-
-
-class SSORecoverPasswordForm(SetPasswordForm):
+class SSORecoverPasswordForm(SSOUpdatePasswordByIdMixin, SetPasswordForm):
     """
     Let the user change his/her password without entering the
     old password, but the new password must be different from
     the old one.
     """
     def clean(self):
-        cleaned_data = super(SSORecoverPasswordForm, self).clean()
         self.__validate_password()
-        return cleaned_data
+        return super(SSORecoverPasswordForm, self).clean()
 
     def __validate_password(self):
         new_password = self.cleaned_data.get('new_password2')
-        if SSOAPIClient().check_user_identity(self.user.username, new_password):
+        if new_password and SSOAPIClient().check_user_identity(self.user.username, new_password):
             raise ValidationError("Você não pode utilizar uma senha que já utilizou antes.")
-
-    def save(self, commit=True):
-        sso_client = SSOAPIClient()
-        user_sso = sso_client.get_user(self.user.username)
-        sso_client.update_user_by_id(
-            user_sso['id'],
-            login=self.user.username,
-            password=self.cleaned_data['new_password1'],
-            firstname=self.user.first_name,
-            lastname=self.user.last_name,
-            email=self.user.email,
-        )
-
-        return super(SSORecoverPasswordForm, self).save(commit)
